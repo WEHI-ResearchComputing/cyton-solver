@@ -16,15 +16,16 @@ cyton-solver/
 ├── README.md                         # <-- YOU ARE HERE
 ├── backend/                         
 │   ├── api/                          # API Endpoints               
-│   └── core/                         # 
+│   └── core/                         # Core Logic, Models
 │         
 └── frontend/                        
     ├── public/                       # Static Images/Icons
     └── src/
+        ├── assets/
         ├── components/
-        ├── pages/
         ├── services/
         ├── styles/
+        ├── themes/
         └── utils/
 ```
 
