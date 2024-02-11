@@ -1,9 +1,9 @@
 from http.client import HTTPException
 import os, tempfile, copy
 from fastapi import APIRouter, File, UploadFile
-from backend.core.file_reader import ReadData
-from backend.core.data_manager import compute_total_cells, sort_cell_generations
-from backend.core.utils import create_check_matrix
+from core.file_reader import ReadData
+from core.data_manager import compute_total_cells, sort_cell_generations
+from core.utils import create_check_matrix
 
 router = APIRouter()
 
