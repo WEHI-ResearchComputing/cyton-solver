@@ -87,3 +87,30 @@ async def extrapolate(request: Request, parameters: dict, data: Optional[dict] =
     log.info("Model extrapolation successful. Returning extrapolated data.")
 
     return {"extrapolated_data": extrapolated_data}
+
+# =======================
+# Start Fit Endpoint
+#
+# Initiates a background fitting job and returns a taskID to the client
+# =======================
+@router.post('/start_fit')
+async def start_fit(request: Request, data: dict, background_tasks: BackgroundTasks):
+
+    log.info("/start_fit was accessed from: " + str(request.client))
+
+    try:
+        # Extract the experiment data
+        exp_ht, cell_gens_reps, max_div_per_conditions = extract_experiment_data(data['experiment_data'])
+
+        # Generate a unique taskID
+        task_id = str(uuid.uuid4())
+
+        # Start the fitting job in the background
+        background_tasks.add_task(start_background_fit, exp_ht, cell_gens_reps, max_div_per_conditions, task_id)
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Failed to start fit. Please try again.")
+    
+    log.info("Fitting job started successfully." + " Task ID: " + task_id)
+
+    return {"task_id": task_id}
