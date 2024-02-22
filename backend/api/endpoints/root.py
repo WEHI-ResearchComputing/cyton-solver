@@ -1,11 +1,15 @@
 import os, tempfile, uuid
-from typing import Optional, Dict
-from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException
+from typing import Optional
+from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException, Request
+from api.support.logger import initialize_logger
 from api.support.upload import parse_file
 from api.support.extrapolate import extract_experiment_data, get_default_experiment_data, extrapolate_model
 from api.support.start_fit import start_background_fit
 from api.support.default_parameters import get_default_parameters
+from api.support.check_status import get_fitted_parameters
+
 router = APIRouter()
+log = initialize_logger()
 
 # =======================
 # Default Parameters Endpoint:
@@ -13,8 +17,18 @@ router = APIRouter()
 # Returns a dictionary with the default parameters
 # =======================
 @router.get("/default_parameters")
-async def default_parameters():
-    return get_default_parameters()
+async def default_parameters(request: Request):
+
+    log.info("/default_parameters was accessed from: " + str(request.client) + ". Returning default parameters.")
+
+    try:
+        default_parameters = get_default_parameters()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Failed to get default parameters. Please try again.")
+    
+    log.info("Default parameters returned successfully.")
+
+    return default_parameters
 
 # =======================
 # File Upload Endpoint:
@@ -22,8 +36,10 @@ async def default_parameters():
 # Returns a dictionary with the extracted data from the file to the client
 # =======================
 @router.post('/upload')
-async def upload(file: UploadFile = File(...)):
-    
+async def upload(request: Request, file: UploadFile = File(...)):
+
+    log.info("/upload was accessed from: " + str(request.client))
+
     try:
         contents = await file.read()
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
@@ -40,6 +56,7 @@ async def upload(file: UploadFile = File(...)):
     finally:
         if temp_file_path:
             os.remove(temp_file_path)
+        log.info("Upload successful. Returning experiment data.")
 
     return {"experiment_data": experiment_data}
 
@@ -50,16 +67,23 @@ async def upload(file: UploadFile = File(...)):
 # Parameters dictionary must be provided, and experiment data is optional
 # =======================
 @router.post('/extrapolate')
-async def extrapolate(parameters: dict, data: Optional[dict] = None):
+async def extrapolate(request: Request, parameters: dict, data: Optional[dict] = None):
 
-    if data:
-        # If experiment data is provided, extract the data
-        exp_ht, cell_gens_reps, max_div_per_conditions = extract_experiment_data(data)
+    log.info("/extrapolate was accessed from: " + str(request.client))
 
-    else:
-        # If no experiment data is provided, use defaults
-        exp_ht, cell_gens_reps, max_div_per_conditions = get_default_experiment_data()
+    try:
+        if data:
+            # If experiment data is provided, extract the data
+            exp_ht, cell_gens_reps, max_div_per_conditions = extract_experiment_data(data)
+        else:
+            # If no experiment data is provided, use defaults
+            exp_ht, cell_gens_reps, max_div_per_conditions = get_default_experiment_data()
 
-    extrapolated_data = extrapolate_model(exp_ht, max_div_per_conditions, cell_gens_reps, parameters)
+        extrapolated_data = extrapolate_model(exp_ht, max_div_per_conditions, cell_gens_reps, parameters)
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Failed to extrapolate model. Please try again.")
+
+    log.info("Model extrapolation successful. Returning extrapolated data.")
 
     return {"extrapolated_data": extrapolated_data}
