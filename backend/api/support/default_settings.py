@@ -13,7 +13,7 @@ def get_default_settings():
     - dict: A dictionary containing the default settings.
     """
     default_settings = {
-        'pars': DEFAULT_PARS,
+        'parameters': DEFAULT_PARS,
         'bounds': DEFAULT_BOUNDS,
         'vary': DEFAULT_VARY
     }
