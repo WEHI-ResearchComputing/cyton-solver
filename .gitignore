@@ -133,4 +133,5 @@ dmypy.json
 
 **/.DS_Store
 
-_test.py
+test/
+*.csv

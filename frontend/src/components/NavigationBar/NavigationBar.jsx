@@ -16,6 +16,8 @@ import SettingsButton from '../Buttons/SettingsButton';
 import FitButton from '../Buttons/FitButton';
 import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
+import TestPlot from '../Plots/TestPlot';
+import TestPlot2 from '../Plots/TestPlot2';
 
 const drawerWidth = 240;
 
@@ -84,12 +86,20 @@ function NavigationBar() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Typography paragraph>
-          Main Content Area
-        </Typography>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
+          <TestPlot />
+          <TestPlot />
+          <TestPlot />
+          <TestPlot />
+          <TestPlot />
+          <TestPlot />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%'}}>
+        <TestPlot2 />
+        <TestPlot2 />
+      </div>
       </Main>
     </Box>
   );
 }
-
 export default NavigationBar;

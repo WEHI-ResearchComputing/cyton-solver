@@ -1,0 +1,12 @@
+.settingsContent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 18px 0px 12px;
+  }
+  
+  .settingsChangeType {
+    white-space: 'nowrap';
+    margin-right: '8px';
+    align-items: center;
+  }
