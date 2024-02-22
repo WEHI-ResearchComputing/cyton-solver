@@ -33,17 +33,42 @@ cyton-solver/
 
 ## Run App
 
-### Install Dependencies
+### Backend
+The project is built with Python version 3.9.12.
+
+#### Create a Virtual Environment
+```
+python -m venv env
+```
+
+#### Activate the Virtual Environment
+```
+source ./env/bin/activate
+```
+
+#### Install Dependencies
+```
+pip install -r requirements.txt
+```
+
+#### Local Run 
+```
+python main.py
+```       
+
+### Frontend
+
+#### Install Dependencies
 ```
 npm install
 ```
 
-### Build App
+#### Build App
 ```
 npm run build
 ```
 
-### Local Run
+#### Local Run
 ```
 npm run dev
 ```
