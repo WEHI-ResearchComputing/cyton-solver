@@ -13,12 +13,18 @@ log = initialize_logger()
 
 # =======================
 # Default Parameters Endpoint:
-#
-# Returns a dictionary with the default parameters
 # =======================
 @router.get("/default_parameters")
 async def default_parameters(request: Request):
+    """
+    Returns a dictionary with the default parameters.
 
+    Parameters:
+    - request: The FastAPI Request object representing the incoming HTTP request.
+
+    Returns:
+    - default_parameters: A dictionary containing the default parameters.
+    """
     log.info("/default_parameters was accessed from: " + str(request.client) + ". Returning default parameters.")
 
     try:
@@ -31,13 +37,20 @@ async def default_parameters(request: Request):
     return default_parameters
 
 # =======================
-# File Upload Endpoint:
-#
-# Returns a dictionary with the extracted data from the file to the client
+# Upload Endpoint:
 # =======================
 @router.post('/upload')
 async def upload(request: Request, file: UploadFile = File(...)):
+    """
+    Returns a dictionary with the extracted experimental data from the file to the client
 
+    Parameters:
+    - request: The FastAPI Request object representing the incoming HTTP request.
+    - file: The file to be uploaded. Expected in the request's form data.
+
+    Returns:
+    - experiment_data: A dictionary containing the experiment data parsed from the uploaded file.
+    """
     log.info("/upload was accessed from: " + str(request.client))
 
     try:
@@ -62,13 +75,21 @@ async def upload(request: Request, file: UploadFile = File(...)):
 
 # =======================
 # Model Extrapolation Endpoint:
-#
-# Returns the extrapolated data as a dictionary
-# Parameters dictionary must be provided, and experiment data is optional
 # =======================
 @router.post('/extrapolate')
 async def extrapolate(request: Request, parameters: dict, data: Optional[dict] = None):
+    """
+    Returns the extrapolated data as a dictionary. 
+    Parameters dictionary must be provided, and experiment data is optional.
 
+    Parameters:
+    - request: The FastAPI Request object representing the incoming HTTP request.
+    - parameters: Dictionary of parameters.
+    - data: Optional dictionary containing experiment data.
+
+    Returns:
+    - extrapolated_data: A dictionary containing the extrapolated data.
+    """
     log.info("/extrapolate was accessed from: " + str(request.client))
 
     try:
@@ -90,12 +111,20 @@ async def extrapolate(request: Request, parameters: dict, data: Optional[dict] =
 
 # =======================
 # Start Fit Endpoint
-#
-# Initiates a background fitting job and returns a taskID to the client
 # =======================
 @router.post('/start_fit')
 async def start_fit(request: Request, data: dict, background_tasks: BackgroundTasks):
+    """
+    Initiates a background fitting job and returns a taskID to the client.
 
+    Parameters:
+    - request: The FastAPI Request object representing the incoming HTTP request.
+    - data: Dictionary containing experiment data.
+    - background_tasks: FastAPI class for scheduling background tasks.
+
+    Returns:
+    - task_id: A dictionary containing the taskID.
+    """
     log.info("/start_fit was accessed from: " + str(request.client))
 
     try:
@@ -117,12 +146,20 @@ async def start_fit(request: Request, data: dict, background_tasks: BackgroundTa
 
 # =======================
 # Check Status Endpoint
-#
-# Checks the status of a fitting job and returns the fitted parameters if true
 # =======================
 @router.post('/check_status')
 async def check_status(request: Request, data: dict):
-    
+        """
+        Checks the status of a fitting job and returns the fitted parameters if completed.
+        Else, returns None.
+
+        Parameters:
+        - request: The FastAPI Request object representing the incoming HTTP request.
+        - data: Dictionary containing task_id for checking the status.
+
+        Returns:
+        - fitted_parameters: A dictionary containing the fitted parameters.
+        """
         log.info("/check_status was accessed from: " + str(request.client))
 
         if not data.get('task_id'):
