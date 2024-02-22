@@ -8,6 +8,15 @@ from api.support.default_parameters import get_default_parameters
 router = APIRouter()
 
 # =======================
+# Default Parameters Endpoint:
+#
+# Returns a dictionary with the default parameters
+# =======================
+@router.get("/default_parameters")
+async def default_parameters():
+    return get_default_parameters()
+
+# =======================
 # File Upload Endpoint:
 #
 # Returns a dictionary with the extracted data from the file to the client
