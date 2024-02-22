@@ -2,8 +2,6 @@
 Last Edit: 11-Feb-2024
 
 Function for Endpoint: Start Fit
-
-Returns the fitted parameters
 """
 import pandas as pd
 from core.model_fitting import get_parameters, get_model, fit
@@ -22,8 +20,20 @@ def fit_model(exp_ht, cell_gens_reps, max_div_per_conditions):
     return fit(exp_ht, cell_gens_reps, params, paramExcl, model)
 
 def start_background_fit(exp_ht, cell_gens_reps, max_div_per_conditions, task_id):
+    """
+    Start a background fitting job and save the fitted parameters to a CSV file when completed.
 
+    Parameters:
+    - exp_ht
+    - cell_gens_reps
+    - max_div_per_conditions
+    - task_id: Unique identifier for the fitting task
+    """
+
+    # Fit the model and get the fitted parameters
     mUns, sUns, mDiv0, sDiv0, mDD, sDD, mDie, sDie, b, p = fit_model(exp_ht, cell_gens_reps, max_div_per_conditions)
+
+    # Save the fitted parameters to a dictionary
     fitted_parameters = {
         'mUns': mUns,
         'sUns': sUns,

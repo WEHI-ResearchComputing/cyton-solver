@@ -16,7 +16,7 @@ DEFAULT_MAX_DIV_PER_CONDITIONS = 10
 
 
 DEFAULT_PARS = {
-		'mUns': 100_000, 'sUns': 1E-10,  # Unstimulated death time (NOT USED HERE)
+		'mUns': 100_000, 'sUns': 1E-10,  # Unstimulated death time
 		'mDiv0': 30, 'sDiv0': 0.2,     # Time to first division
 		'mDD': 60, 'sDD': 0.3,         # Time to division destiny
 		'mDie': 80, 'sDie': 0.2,       # Time to death

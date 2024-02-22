@@ -23,7 +23,7 @@ async def default_parameters(request: Request):
     - request: The FastAPI Request object representing the incoming HTTP request.
 
     Returns:
-    - default_parameters: A dictionary containing the default parameters.
+    - dict: A dictionary containing the default parameters.
     """
     log.info("/default_parameters was accessed from: " + str(request.client) + ". Returning default parameters.")
 
@@ -49,7 +49,7 @@ async def upload(request: Request, file: UploadFile = File(...)):
     - file: The file to be uploaded. Expected in the request's form data.
 
     Returns:
-    - experiment_data: A dictionary containing the experiment data parsed from the uploaded file.
+    - dict: A dictionary containing the experiment data parsed from the uploaded file.
     """
     log.info("/upload was accessed from: " + str(request.client))
 
@@ -88,7 +88,7 @@ async def extrapolate(request: Request, parameters: dict, data: Optional[dict] =
     - data: Optional dictionary containing experiment data.
 
     Returns:
-    - extrapolated_data: A dictionary containing the extrapolated data.
+    - dict: A dictionary containing the extrapolated data.
     """
     log.info("/extrapolate was accessed from: " + str(request.client))
 
@@ -158,7 +158,7 @@ async def check_status(request: Request, data: dict):
         - data: Dictionary containing task_id for checking the status.
 
         Returns:
-        - fitted_parameters: A dictionary containing the fitted parameters.
+        - dict: A dictionary containing the fitted parameters.
         """
         log.info("/check_status was accessed from: " + str(request.client))
 

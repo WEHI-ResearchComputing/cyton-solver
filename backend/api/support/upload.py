@@ -2,8 +2,6 @@
 Last Edit: 21-Feb-2024
 
 Function for Endpoint: Upload
-
-Extracts the data from the file and saves it as a dictionary.
 """
 import copy
 from core.file_reader import ReadData
@@ -11,7 +9,15 @@ from core.data_manager import compute_total_cells, sort_cell_generations
 from core.utils import create_check_matrix
 
 def parse_file(temp_file_path):
-    
+    """
+    Parse data from a file and return a dictionary containing the extracted experiment data.
+
+    Parameters:
+    - temp_file_path: The path to the temporary file
+
+    Returns:
+    - dict: A dictionary containing experiment data extracted from the file.
+    """
     data_reader = ReadData(temp_file_path)
     exp_ht = data_reader.harvested_times
     exp_ht_reps = data_reader.harvested_times_reps

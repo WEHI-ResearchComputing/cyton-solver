@@ -7,7 +7,17 @@ import os
 import pandas as pd
 
 def get_fitted_parameters(task_id):
-     
+    """
+    Retrieve fitted parameters from a CSV file associated with a given task ID.
+
+    Parameters:
+    - task_id: The unique identifier for the fitting task.
+
+    Returns:
+    - fitted_parameters: A dictionary containing the fitted parameters, or None if the file does 
+      not exist/ has not been completed.
+    """
+
     # Check if the fitted parameters file exists
     file_path = f'fitted_parameters_{task_id}.csv'
 

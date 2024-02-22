@@ -1,4 +1,6 @@
 """
+Last Edit: 21-Feb-2024
+
 Logger
 
 Creates a logger object that can be used to log messages to the console.
