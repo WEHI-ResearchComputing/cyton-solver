@@ -114,3 +114,29 @@ async def start_fit(request: Request, data: dict, background_tasks: BackgroundTa
     log.info("Fitting job started successfully." + " Task ID: " + task_id)
 
     return {"task_id": task_id}
+
+# =======================
+# Check Status Endpoint
+#
+# Checks the status of a fitting job and returns the fitted parameters if true
+# =======================
+@router.post('/check_status')
+async def check_status(request: Request, data: dict):
+    
+        log.info("/check_status was accessed from: " + str(request.client))
+
+        if not data.get('task_id'):
+            raise HTTPException(status_code=400, detail="task_id is required.")
+        
+        task_id = data.get('task_id')
+
+        try:
+            # Returns None if the task is not completed
+            fitted_parameters = get_fitted_parameters(task_id)
+    
+        except Exception as e:
+            raise HTTPException(status_code=400, detail="Failed to check status. Please try again.")
+    
+        log.info("Status checked successfully for task ID: " + task_id)
+    
+        return {"fitted_parameters_" + task_id : fitted_parameters}
