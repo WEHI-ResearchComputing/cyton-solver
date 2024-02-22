@@ -25,7 +25,18 @@ def extract_settings(settings):
     return settings.get("parameters"), settings.get("bounds"), settings.get("vary")
 
 def fit_model(exp_ht, cell_gens_reps, max_div_per_conditions, settings):
-    
+    """
+    Perform model fitting with the provided experiment data and settings.
+
+    Parameters:
+    - exp_ht
+    - cell_gens_reps
+    - max_div_per_conditions
+    - settings: Dictionary containing parameter, bounds, and vary settings.
+
+    Returns:
+    - Fitted model parameters
+    """
     nreps = [len(l) for l in cell_gens_reps[0]]
     parameters, bounds, vary = extract_settings(settings)
     params, paramExcl = get_parameters(parameters, bounds, vary)
