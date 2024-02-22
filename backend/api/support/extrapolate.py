@@ -1,7 +1,7 @@
 """
 Last Edit: 21-Feb-2024
 
-Function for Endpoint: Extrapolation
+Function for Endpoint: Extrapolate
 
 Returns the extrapolated data as a dictionary
 """
