@@ -33,17 +33,30 @@ cyton-solver/
 
 ## Run App
 
-### Install Dependencies
+### Backend
+
+#### Install Dependencies
+```
+pip install -r requirements.txt
+```
+#### Local Run 
+```
+python main.py
+```       
+
+### Frontend
+
+#### Install Dependencies
 ```
 npm install
 ```
 
-### Build App
+#### Build App
 ```
 npm run build
 ```
 
-### Local Run
+#### Local Run
 ```
 npm run dev
 ```
