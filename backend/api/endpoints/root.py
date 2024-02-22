@@ -1,59 +1,29 @@
-from http.client import HTTPException
-import os, tempfile, copy
-from fastapi import APIRouter, File, UploadFile
-from core.file_reader import ReadData
-from core.data_manager import compute_total_cells, sort_cell_generations
-from core.utils import create_check_matrix
-
+import os, tempfile, uuid
+from typing import Optional, Dict
+from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException
+from api.support.upload import parse_file
+from api.support.extrapolate import extract_experiment_data, get_default_experiment_data, extrapolate_model
+from api.support.start_fit import start_background_fit
+from api.support.default_parameters import get_default_parameters
 router = APIRouter()
 
+# =======================
+# File Upload Endpoint:
+#
+# Returns a dictionary with the extracted data from the file to the client
+# =======================
 @router.post('/upload')
-async def upload_file(file: UploadFile = File(...)):
+async def upload(file: UploadFile = File(...)):
     
     try:
         contents = await file.read()
-
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
+            # Write the contents to a temporary file
             temp_file.write(contents)
             temp_file_path = temp_file.name
-    
-        data_reader = ReadData(temp_file_path)
-        exp_ht = data_reader.harvested_times
-        exp_ht_reps = data_reader.harvested_times_reps
-        max_div_per_conditions = data_reader.generation_per_condition
-        conditions = data_reader.condition_names
-        exp_num_tp = data_reader.num_time_points
-        
-        total_cells, total_cells_reps, total_cells_sem = compute_total_cells(
-            data_reader.data,
-            data_reader.condition_names,
-            data_reader.num_time_points,
-            data_reader.generation_per_condition
-        )
 
-        cell_gens, cell_gens_reps, cell_gens_sem = sort_cell_generations(
-            data_reader.data,
-            data_reader.condition_names,
-            data_reader.num_time_points,
-            data_reader.generation_per_condition
-        )
-
-        c15_check = create_check_matrix(copy.deepcopy(cell_gens_reps))
-
-        data = {
-                "exp_ht": exp_ht,
-                "exp_ht_reps": exp_ht_reps,
-                "max_div_per_conditions": max_div_per_conditions,
-                "conditions": conditions,
-                "exp_num_tp": exp_num_tp,
-                "total_cells": total_cells,
-                "total_cells_reps": total_cells_reps,
-                "total_cells_sem": total_cells_sem,
-                "cell_gens": cell_gens,
-                "cell_gens_reps": cell_gens_reps,
-                "cell_gens_sem": cell_gens_sem,
-                "c15_check": c15_check
-            }
+        # Parse the file and extract the data
+        experiment_data = parse_file(temp_file_path)
         
     except Exception as e:
         raise HTTPException(status_code=400, detail="Failed to upload file. Please try again.")
@@ -62,4 +32,4 @@ async def upload_file(file: UploadFile = File(...)):
         if temp_file_path:
             os.remove(temp_file_path)
 
-    return {"data": data}
+    return {"experiment_data": experiment_data}
