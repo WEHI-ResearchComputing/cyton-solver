@@ -6,19 +6,18 @@ from api.support.upload import parse_file
 from api.support.extrapolate import extract_experiment_data, get_default_experiment_data, extrapolate_model
 from api.support.start_fit import start_background_fit
 from api.support.default_settings import get_default_settings
-
 from api.support.check_status import get_fitted_parameters
 
 router = APIRouter()
 log = initialize_logger()
 
 # =======================
-# Default Parameters Endpoint:
+# Default Settings Endpoint:
 # =======================
 @router.get("/default_settings")
 async def default_settings(request: Request):
     """
-    Returns a dictionary with the default settings.
+    Returns a dictionary with the default settings (parameters, bounds, vary).
 
     Parameters:
     - request: The FastAPI Request object representing the incoming HTTP request.
@@ -114,13 +113,14 @@ async def extrapolate(request: Request, parameters: dict, data: Optional[dict] =
 # Start Fit Endpoint
 # =======================
 @router.post('/start_fit')
-async def start_fit(request: Request, data: dict, background_tasks: BackgroundTasks):
+async def start_fit(request: Request, data: dict, settings:dict, background_tasks: BackgroundTasks):
     """
     Initiates a background fitting job and returns a taskID to the client.
 
     Parameters:
     - request: The FastAPI Request object representing the incoming HTTP request.
     - data: Dictionary containing experiment data.
+    - settings: Dictionary containing the fitting settings (parameters, bounds, vary).
     - background_tasks: FastAPI class for scheduling background tasks.
 
     Returns:
@@ -136,7 +136,7 @@ async def start_fit(request: Request, data: dict, background_tasks: BackgroundTa
         task_id = str(uuid.uuid4())
 
         # Start the fitting job in the background
-        background_tasks.add_task(start_background_fit, exp_ht, cell_gens_reps, max_div_per_conditions, task_id)
+        background_tasks.add_task(start_background_fit, exp_ht, cell_gens_reps, max_div_per_conditions, settings, task_id)
 
     except Exception as e:
         raise HTTPException(status_code=400, detail="Failed to start fit. Please try again.")
