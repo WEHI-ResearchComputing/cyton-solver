@@ -64,10 +64,12 @@ npm install
 ```
 
 #### Build App
+#### Build App
 ```
 npm run build
 ```
 
+#### Local Run
 #### Local Run
 ```
 npm run dev
