@@ -5,7 +5,8 @@ from api.support.logger import initialize_logger
 from api.support.upload import parse_file
 from api.support.extrapolate import extract_experiment_data, get_default_experiment_data, extrapolate_model
 from api.support.start_fit import start_background_fit
-from api.support.default_parameters import get_default_parameters
+from api.support.default_settings import get_default_settings
+
 from api.support.check_status import get_fitted_parameters
 
 router = APIRouter()
@@ -14,27 +15,27 @@ log = initialize_logger()
 # =======================
 # Default Parameters Endpoint:
 # =======================
-@router.get("/default_parameters")
-async def default_parameters(request: Request):
+@router.get("/default_settings")
+async def default_settings(request: Request):
     """
-    Returns a dictionary with the default parameters.
+    Returns a dictionary with the default settings.
 
     Parameters:
     - request: The FastAPI Request object representing the incoming HTTP request.
 
     Returns:
-    - dict: A dictionary containing the default parameters.
+    - dict: A dictionary containing the default settings.
     """
-    log.info("/default_parameters was accessed from: " + str(request.client) + ". Returning default parameters.")
+    log.info("/default_settings was accessed from: " + str(request.client) + ". Returning default settings.")
 
     try:
-        default_parameters = get_default_parameters()
+        default_settings = get_default_settings()
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Failed to get default parameters. Please try again.")
+        raise HTTPException(status_code=400, detail="Failed to get default settings. Please try again.")
     
-    log.info("Default parameters returned successfully.")
+    log.info("Default settings returned successfully.")
 
-    return default_parameters
+    return default_settings
 
 # =======================
 # Upload Endpoint:

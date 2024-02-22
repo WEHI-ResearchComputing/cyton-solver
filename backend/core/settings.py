@@ -11,10 +11,10 @@ DEFAULT_CELL_GENS_REPS = 10
 DEFAULT_MAX_DIV_PER_CONDITIONS = 10
 
 # =====================
-# Model Parameter Settings
+# Model Settings
 # =====================
 
-
+# Parameters
 DEFAULT_PARS = {
 		'mUns': 100_000, 'sUns': 1E-10,  # Unstimulated death time
 		'mDiv0': 30, 'sDiv0': 0.2,     # Time to first division
