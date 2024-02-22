@@ -2,8 +2,6 @@
 Last Edit: 11-Feb-2024
 
 Function for Endpoint: Default Parameters
-
-Returns the default parameters
 """
 from core.settings import DEFAULT_PARS
 
