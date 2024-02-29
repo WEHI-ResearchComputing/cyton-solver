@@ -5,8 +5,11 @@ Reshape an input data format to a 4D array (icnd, itpt, igen, irep)
 """
 from scipy.stats import sem
 from core.utils import remove_empty
+import cyton.core.types as types
 
-def compute_total_cells(data, conditions, num_tps, gen_per_condition):
+def compute_total_cells(data: types.CellNumber4D, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+	types.TotalCells, types.TotalCellsReps, types.TotalCellsSem
+]:
 	"""
 	All parameters are output of file_reader.py object, which consists meta information about the data itself.
 
@@ -69,7 +72,9 @@ def compute_total_cells(data, conditions, num_tps, gen_per_condition):
 
 	return filtered_total_cells, filtered_total_cells_reps, filtered_total_cells_sem
 
-def sort_cell_generations(data, conditions, num_tps, gen_per_condition):
+def sort_cell_generations(data: types.CellNumber4D, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+	types.AvgCellPerGen, types.TotalCellsReps, types.TotalCellsSem
+]:
 	"""
 	This function organises cell-generation profile.
 

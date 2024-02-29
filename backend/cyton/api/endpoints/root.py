@@ -1,12 +1,13 @@
 import os, tempfile, uuid
 from typing import Optional
 from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException, Request
-from api.support.logger import initialize_logger
-from api.support.upload import parse_file
-from api.support.extrapolate import extract_experiment_data, get_default_experiment_data, extrapolate_model
-from api.support.start_fit import start_background_fit
-from api.support.default_settings import get_default_settings
-from api.support.check_status import get_fitted_parameters
+from cyton.api.support.logger import initialize_logger
+from cyton.api.support.upload import parse_file
+from cyton.api.support.extrapolate import extract_experiment_data, get_default_experiment_data, extrapolate_model
+from cyton.api.support.start_fit import start_background_fit
+from cyton.api.support.default_settings import get_default_settings
+from cyton.api.support.check_status import get_fitted_parameters
+from cyton.core.types import DefaultSettings
 
 router = APIRouter()
 log = initialize_logger()
@@ -15,7 +16,7 @@ log = initialize_logger()
 # Default Settings Endpoint:
 # =======================
 @router.get("/default_settings")
-async def default_settings(request: Request):
+async def default_settings(request: Request) -> DefaultSettings:
     """
     Returns a dictionary with the default settings (parameters, bounds, vary).
 
@@ -25,11 +26,11 @@ async def default_settings(request: Request):
     Returns:
     - dict: A dictionary containing the default settings.
     """
-    log.info("/default_settings was accessed from: " + str(request.client) + ". Returning default settings.")
+    log.info(f"/default_settings was accessed from: {request.client}. Returning default settings.")
 
     try:
         default_settings = get_default_settings()
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400, detail="Failed to get default settings. Please try again.")
     
     log.info("Default settings returned successfully.")
@@ -63,7 +64,7 @@ async def upload(request: Request, file: UploadFile = File(...)):
         # Parse the file and extract the data
         experiment_data = parse_file(temp_file_path)
         
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400, detail="Failed to upload file. Please try again.")
     
     finally:

@@ -1,4 +1,6 @@
 
+from cyton.core.types import Parameters, Bounds, Vary
+
 # =====================
 # Extrapolation Default Settings
 # ========
@@ -15,7 +17,7 @@ DEFAULT_MAX_DIV_PER_CONDITIONS = 10
 # =====================
 
 # Parameters
-DEFAULT_PARS = {
+DEFAULT_PARS: Parameters = {
 		'mUns': 100_000, 'sUns': 1E-10,  # Unstimulated death time
 		'mDiv0': 30, 'sDiv0': 0.2,     # Time to first division
 		'mDD': 60, 'sDD': 0.3,         # Time to division destiny
@@ -23,7 +25,7 @@ DEFAULT_PARS = {
 		'b': 10, 'p': 1                # Subsequent division time & Proportion of activated cells
 	}
 
-DEFAULT_BOUNDS = {
+DEFAULT_BOUNDS: Bounds = {
 		'lb': {  # Lower bounds
 			'mUns': 1E-2, 'sUns': 1E-2,
 			'mDiv0': 1E-2, 'sDiv0': 1E-2,
@@ -40,7 +42,7 @@ DEFAULT_BOUNDS = {
 		}
 	}
 
-DEFAULT_VARY = {  # True = Subject to change; False = Lock parameter
+DEFAULT_VARY: Vary = {  # True = Subject to change; False = Lock parameter
 		'mUns': False, 'sUns': False,  # This is Cyton1.5 specific parameters. In Cyton2, this is not used!
 		'mDiv0': True, 'sDiv0': True,
 		'mDD': True, 'sDD': True,

@@ -4,13 +4,22 @@ Last Edit: 11-Feb-2024
 Extracts required information from the workbook.
 """
 import openpyxl
+from openpyxl.worksheet.worksheet import Worksheet
 from datetime import datetime
 from itertools import groupby
-from core.utils import remove_empty
+from cyton.core.utils import remove_empty
+import cyton.core.types as types
 
 class ReadData:
-	def __init__(self, file):
-		
+	meta_information: types.MetaInformation
+	condition_names: list[str]
+	generation_per_condition: types.GenerationPerCondition
+	harvested_times: types.HarvestedTimes
+	harvested_times_reps: types.HarvestedTimesReps
+	num_time_points: types.NumTimePoints
+	data: types.CellNumber
+	
+	def __init__(self, file: str):
 		# Data_Only parameter required to remove equations
 		workbook = openpyxl.load_workbook(file, data_only=True)
 		sheet_names = workbook.sheetnames
@@ -18,7 +27,7 @@ class ReadData:
 		try:
 			# Try Legacy data format by Cohort Explorer v2018.05.09
 			ws = workbook['Input for CytonSolver']
-		except Exception as e:
+		except Exception:
 			# Else, default is first sheet of FormatHLSep2016
 			ws = workbook[sheet_names[0]]  # Selects the first sheet
 
@@ -35,7 +44,7 @@ class ReadData:
 		self.data = self.get_cell_number(ws, data_format)
 		
 	@staticmethod
-	def validate_data_format(worksheet):
+	def validate_data_format(worksheet: Worksheet) -> bool:
 		"""
 		Validates input excel file data format
 
@@ -50,7 +59,7 @@ class ReadData:
 			return False
 
 	@staticmethod
-	def get_experiment_info(worksheet, data_format):
+	def get_experiment_info(worksheet: Worksheet, data_format: bool) -> types.MetaInformation:
 		"""
 		Collects user defined experiment information.
 
@@ -62,7 +71,7 @@ class ReadData:
 
 		if data_format:
 			# Initialise information dictionary
-			exp_info = {
+			exp_info: types.ExperimentInfo = {
 				'num_tp': 0,
 				'last_gen': 0,
 				'num_condition': 0,
@@ -129,7 +138,7 @@ class ReadData:
 		
 		else:
 			# Initialise information dictionary for legacy type data format
-			exp_info = {
+			exp_info: types.LegacyExperimentMetadata = {
 				'stimulus': '',
 				'date': '',
 				'cell_type': '',
@@ -173,13 +182,13 @@ class ReadData:
 			return exp_info
 
 	@staticmethod
-	def get_condition_names(worksheet, data_format):
+	def get_condition_names(worksheet: Worksheet, data_format: bool) -> list[str]:
 		"""
 		Collects experiment condition names (e.g. Wildtype-1U, Wildtype-Unstim)
 
-		:param1 worksheet: (Worksheet) openpyxl worksheet object
-		:param2 data_format: (bool) validation of data format
-		:returns: (list) condition names
+		:param1 worksheet: openpyxl worksheet object
+		:param2 data_format: validation of data format
+		:returns: condition names
 		"""
 
 		conditions = []
@@ -201,7 +210,7 @@ class ReadData:
 						conditions.append(str(val))
 			return conditions
 
-	def get_generation_information(self, worksheet, data_format):
+	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> GenerationPerCondition:
 		"""
 		Collects last generation information per conditions.
 
@@ -229,12 +238,14 @@ class ReadData:
 						counter += 1
 			return generation
 
-	def get_time_points(self, worksheet, data_format):
+	def get_time_points(self, worksheet: Worksheet, data_format: bool) -> tuple[
+		types.HarvestedTimes, types.HarvestedTimesReps, types.NumTimePoints
+	]:
 		"""
 		Collects harvested time points per conditions.
 
-		:param1 worksheet: (Worksheet) openpyxl worksheet object
-		:param2 data_format: (bool) validation of data format
+		:param1 worksheet: openpyxl worksheet object
+		:param2 data_format: validation of data format
 		:returns: (tuple; list, list) returns harvested time points & duplicates of harvested time points to represent replicates
 		"""
 
@@ -308,7 +319,7 @@ class ReadData:
 
 			return harvested_times, harvested_times_reps, num_time_points
 
-	def get_cell_number(self, worksheet, data_format):
+	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> types.CellNumber:
 		"""
 		Collects main data of the experiment.
 		Sorts cell number data according to icnd, itpt, igen.
