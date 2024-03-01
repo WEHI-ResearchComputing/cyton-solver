@@ -1,5 +1,5 @@
 
-from cyton.core.types import Parameters, Bounds, Vary
+from cyton.core.types import Parameters, Bounds, FittableParams, LmFitKwargs
 
 # =====================
 # Extrapolation Default Settings
@@ -7,10 +7,7 @@ from cyton.core.types import Parameters, Bounds, Vary
 # =============
 
 DEFAULT_EXP_HT = [0, 12, 24, 36, 48, 72, 96, 120, 144]
-
-DEFAULT_CELL_GENS_REPS = 10
-
-DEFAULT_MAX_DIV_PER_CONDITIONS = 10
+DEFAULT_MAX_DIV = 10
 
 # =====================
 # Model Settings
@@ -42,7 +39,7 @@ DEFAULT_BOUNDS: Bounds = {
 		}
 	}
 
-DEFAULT_VARY: Vary = {  # True = Subject to change; False = Lock parameter
+DEFAULT_VARY: FittableParams = {  # True = Subject to change; False = Lock parameter
 		'mUns': False, 'sUns': False,  # This is Cyton1.5 specific parameters. In Cyton2, this is not used!
 		'mDiv0': True, 'sDiv0': True,
 		'mDD': True, 'sDD': True,
@@ -62,7 +59,7 @@ ITER_SEARCH = 1		  # [Cyton Model] Number of initial search (100 is usually a go
 
 MAX_NFEV = None 	  # [LMFIT] Maximum number of function evaluation
 
-LM_FIT_KWS = {        # [LMFIT/SciPy] Key-word arguements pass to LMFIT minimizer for Levenberg-Marquardt algorithm
+LM_FIT_KWS: LmFitKwargs = {        # [LMFIT/SciPy] Key-word arguements pass to LMFIT minimizer for Levenberg-Marquardt algorithm
     # 'ftol': 1E-10,  # Relative error desired in the sum of squares. DEFAULT: 1.49012E-8
     # 'xtol': 1E-10,  # Relative error desired in the approximate solution. DEFAULT: 1.49012E-8
     # 'gtol': 0.0,    # Orthogonality desired between the function vector and the columns of the Jacobian. DEFAULT: 0.0

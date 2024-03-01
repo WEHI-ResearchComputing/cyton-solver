@@ -1,0 +1,14 @@
+- uses: actions/checkout@v3
+- uses: actions/setup-python@v4
+  with:
+    python-version: "3.12"
+    cache: 'pip'
+
+# Check that the package installs
+- run: |
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install ./backend
+
+# Run the type checker
+- uses: jakebailey/pyright-action@v2

@@ -17,7 +17,7 @@ class ReadData:
 	harvested_times: types.HarvestedTimes
 	harvested_times_reps: types.HarvestedTimesReps
 	num_time_points: types.NumTimePoints
-	data: types.CellNumber
+	data: types.CellNumberPerGen
 	
 	def __init__(self, file: str):
 		# Data_Only parameter required to remove equations
@@ -64,7 +64,7 @@ class ReadData:
 		Collects user defined experiment information.
 
 		:param1 worksheet: (Worksheet) openpyxl worksheet object
-		:param2 data_format: (bool) validation of data format
+		:param2 data_format: (bool) True if we're using the new Excel data format
 		:returns: (dict) experiments basic information
 		:raises CustomError: raises a CustomError (inherits Exception) for missing critical information
 		"""
@@ -210,7 +210,7 @@ class ReadData:
 						conditions.append(str(val))
 			return conditions
 
-	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> GenerationPerCondition:
+	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> types.GenerationPerCondition:
 		"""
 		Collects last generation information per conditions.
 
@@ -319,7 +319,7 @@ class ReadData:
 
 			return harvested_times, harvested_times_reps, num_time_points
 
-	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> types.CellNumber:
+	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> types.CellNumberPerGen:
 		"""
 		Collects main data of the experiment.
 		Sorts cell number data according to icnd, itpt, igen.

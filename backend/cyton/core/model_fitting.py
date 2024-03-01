@@ -3,27 +3,23 @@ Last Edit: 11-Feb-2024
 
 Model Fitting
 """
+from typing import cast
 import tqdm
 import pandas as pd
 import numpy as np
-import multiprocessing as mp
 import lmfit as lmf
 from core.cyton2 import Cyton2Model
 from core.settings import MAX_NFEV, LM_FIT_KWS, ITER_SEARCH, DT
+from cyton.core import types
+from numpy.typing import NDArray
 
 # Model: Residual
-def residual(pars, x, data=None, model=None):
-	vals = pars.valuesdict()
-	mUns, sUns = vals['mUns'], vals['sUns']
-	mDiv0, sDiv0 = vals['mDiv0'], vals['sDiv0']
-	mDD, sDD = vals['mDD'], vals['sDD']
-	mDie, sDie = vals['mDie'], vals['sDie']
-	b, p = vals['b'], vals['p']
-	pred = model.evaluate(mUns, sUns, mDiv0, sDiv0, mDD, sDD, mDie, sDie, b, p)
+def residual(pars: lmf.Parameters, x: NDArray, data: NDArray, model: Cyton2Model) -> NDArray[np.float_]:
+	vals: types.Parameters = cast(types.Parameters, pars.valuesdict())
+	pred = model.evaluate(vals)
+	return data - pred
 
-	return (data - pred)
-
-def get_parameters(pars, bounds, vary):
+def get_parameters(pars: types.Parameters, bounds: types.Bounds, vary: types.FittableParams) -> tuple[lmf.Parameters, types.ExcludedParameters]:
 	params = lmf.Parameters()
 	for par in pars:
 		params.add(par, value=pars[par], min=bounds['lb'][par], max=bounds['ub'][par], vary=vary[par])
@@ -31,26 +27,24 @@ def get_parameters(pars, bounds, vary):
 
 	return params, paramExcl
 
-def get_model(exp_ht, n0, max_div_per_conditions, dt, nreps):
-    return Cyton2Model(exp_ht[0], n0, max_div_per_conditions[0], dt, nreps)
-
-def get_times(exp_ht):
+def get_times(exp_ht: types.HarvestTimes) -> types.ExtrapolationTimes:
     t0 = 0
-    tf = max(exp_ht[0]) + 5
+    tf = max(exp_ht) + 5
     return np.linspace(t0, tf, num=int(tf/DT)+1)
 
 # Initial Model Extrapolation
-def extrapolate(model, times, pars):
-	ext = model.extrapolate(times, pars)  # model extrapolation
-	ext_total_live_cells = ext['ext']['total_live_cells']  # total number of cells (sum over all genrations)
-	ext_cells_per_gen    = ext['ext']['cells_gen']        # number of cells in each generation as a function of time
-	hts_total_live_cells = ext['hts']['total_live_cells']  # total number of cells at specified harvested time points
-	hts_cells_per_gen    = ext['hts']['cells_gen']       # number of cells in each generation at each harvested time points
+def extrapolate(model: Cyton2Model, times: types.ExtrapolationTimes, pars: types.Parameters) -> types.ExtrapolatedData:
+    ext = model.extrapolate(times, pars)  # model extrapolation
 
-	return ext_total_live_cells, ext_cells_per_gen, hts_total_live_cells, hts_cells_per_gen
+    return {
+        "ext_total_live_cells": ext['ext']['total_live_cells'],  # total number of cells (sum over all genrations)
+        "ext_cells_per_gen": ext['ext']['cells_gen'],        # number of cells in each generation as a function of time
+        "hts_total_live_cells": ext['hts']['total_live_cells'],  # total number of cells at specified harvested time points
+        "hts_cells_per_gen": ext['hts']['cells_gen']       # number of cells in each generation at each harvested time points
+    }
 
 # Fitting Process
-def fit(exp_ht, cell_gens_reps, params, paramExcl, model) :
+def fit(exp_ht: types.HarvestTimes, cell_gens_reps: types.CellPerGensReps, params: lmf.Parameters, paramExcl: types.ExcludedParameters, model: Cyton2Model) -> types.Parameters:
 
     x_gens = np.array(exp_ht[0])
     y_cells = np.array(cell_gens_reps[0]).flatten()
@@ -71,17 +65,12 @@ def fit(exp_ht, cell_gens_reps, params, paramExcl, model) :
 
             candidates['result'].append(res)
             candidates['residual'].append(res.chisqr)
-        except ValueError as ve:
+        except ValueError:
             pass
 
     fit_results = pd.DataFrame(candidates)
     fit_results.sort_values('residual', ascending=True, inplace=True)  # Find lowest RSS
 
     best_fit = fit_results.iloc[0]['result'].params.valuesdict()
-    mUns, sUns = best_fit['mUns'], best_fit['sUns']
-    mDiv0, sDiv0 = best_fit['mDiv0'], best_fit['sDiv0']
-    mDD, sDD = best_fit['mDD'], best_fit['sDD']
-    mDie, sDie = best_fit['mDie'], best_fit['sDie']
-    b, p = best_fit['b'], best_fit['p']
 
-    return mUns, sUns, mDiv0, sDiv0, mDD, sDD, mDie, sDie, b, p
+    return best_fit

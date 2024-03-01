@@ -4,9 +4,9 @@ Last Edit: 11-Feb-2024
 Function for Endpoint: Default Settings
 """
 from core.settings import DEFAULT_PARS, DEFAULT_BOUNDS, DEFAULT_VARY
-from cyton.core.types import DefaultSettings
+from cyton.core.types import ExperimentSettings
 
-def get_default_settings() -> DefaultSettings:
+def get_default_settings() -> ExperimentSettings:
     """
     Retrieve the default settings for parameter, bounds and vary.
 

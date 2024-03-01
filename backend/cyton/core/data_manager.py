@@ -7,7 +7,7 @@ from scipy.stats import sem
 from core.utils import remove_empty
 import cyton.core.types as types
 
-def compute_total_cells(data: types.CellNumber4D, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+def compute_total_cells(data: types.CellNumberPerGen, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
 	types.TotalCells, types.TotalCellsReps, types.TotalCellsSem
 ]:
 	"""
@@ -72,8 +72,8 @@ def compute_total_cells(data: types.CellNumber4D, conditions: types.Conditions, 
 
 	return filtered_total_cells, filtered_total_cells_reps, filtered_total_cells_sem
 
-def sort_cell_generations(data: types.CellNumber4D, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
-	types.AvgCellPerGen, types.TotalCellsReps, types.TotalCellsSem
+def sort_cell_generations(data: types.CellNumberPerGen, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+	types.AvgCellPerGen, types.CellNumberPerGen, types.CellsPerGenSem
 ]:
 	"""
 	This function organises cell-generation profile.

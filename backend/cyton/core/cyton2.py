@@ -5,11 +5,24 @@ Cyton2 Algorithm Model
 """
 import numpy as np
 from scipy.stats import lognorm, norm
+from cyton.core import types
 
 DTYPE = np.float64
 
 class Cyton2Model:
-  def __init__(self, ht, n0, max_div, dt, nreps, logn=True):
+  t0: float
+  tf: float
+  dt: float
+  times: types.ExtrapolationTimes
+  nt: int
+  n0: int
+  ht: types.HarvestTimes
+  nreps: types.NReps
+  exp_max_div: types.MaxGeneration
+  max_div: types.MaxGeneration
+  logn: bool
+
+  def __init__(self, ht: types.HarvestTimes, n0: int, max_div: types.MaxGeneration, dt: float, nreps: types.NReps = [], logn: bool = True):
 
     self.t0 = 0.0
     self.tf = max(ht) + dt
@@ -27,19 +40,19 @@ class Cyton2Model:
     self.max_div = 10  							  # theoretical maximum division number
     self.logn = logn
 
-  def compute_pdf(self, times, mu, sig):
+  def compute_pdf(self, times: types.ExtrapolationTimes, mu: float, sig: float):
     if self.logn:
       return lognorm.pdf(times, sig, scale=mu)
     else:
       return norm.pdf(times, mu, sig)
 
-  def compute_cdf(self, times, mu, sig):
+  def compute_cdf(self, times: types.ExtrapolationTimes, mu: float, sig: float):
     if self.logn:
       return lognorm.cdf(times, sig, scale=mu)
     else:
       return norm.cdf(times, mu, sig)
 
-  def compute_sf(self, times, mu, sig):
+  def compute_sf(self, times: types.ExtrapolationTimes, mu: float, sig: float):
     if self.logn:
       return lognorm.sf(times, sig, scale=mu)
     else:
@@ -64,37 +77,32 @@ class Cyton2Model:
     return pdfDD, sfUns, sfDiv, sfDie, sfDD, nUNS, nDIV, nDES, cells_gen
 
   # Return sum of dividing and destiny cells in each generation
-  def evaluate(self,
-               mUns, sUns,    # unstimulated death
-               mDiv0, sDiv0,  # time to first division
-               mDD, sDD,      # division destiny
-               mDie, sDie,    # stimulated death
-               b, p):         # subsequent division time, activation probability
+  def evaluate(self, params: types.Parameters):         # subsequent division time, activation probability
     times = self.times
 
     # Create empty arrays
     pdfDD, sfUns, sfDiv, sfDie, sfDD, nUNS, nDIV, nDES, cells_gen = self._storage()
 
     # Compute probability distribution
-    pdfDD = self.compute_pdf(times, mDD, sDD)
+    pdfDD = self.compute_pdf(times, params["mDD"], params["sDD"])
 
     # Compute survival functions (i.e. 1 - cdf)
-    sfUns = self.compute_sf(times, mUns, sUns)
-    sfDiv = self.compute_sf(times, mDiv0, sDiv0)
-    sfDie = self.compute_sf(times, mDie, sDie)
-    sfDD = self.compute_sf(times, mDD, sDD)
+    sfUns = self.compute_sf(times, params["mUns"], params["sUns"])
+    sfDiv = self.compute_sf(times, params["mDiv0"], params["sDiv0"])
+    sfDie = self.compute_sf(times, params["mDie"], params["sDie"])
+    sfDD = self.compute_sf(times, params["mDD"], params["sDD"])
 
     # Calculate gen = 0 cells
-    nUNS = self.n0 * (1. - p) * sfUns
-    nDIV[0,:] = self.n0 * p * sfDie * sfDiv * sfDD
-    nDES[0,:] = self.n0 * p * sfDie * np.cumsum([x * y for x, y in zip(pdfDD, sfDiv)]) * self.dt
+    nUNS = self.n0 * (1. - params["p"]) * sfUns
+    nDIV[0,:] = self.n0 * params["p"] * sfDie * sfDiv * sfDD
+    nDES[0,:] = self.n0 * params["p"] * sfDie * np.cumsum([x * y for x, y in zip(pdfDD, sfDiv)]) * self.dt
     cells_gen[0,:] = nUNS + nDIV[0,:] + nDES[0,:]  # cells in generation 0
 
     # Calculate gen > 0 cells
     for igen in range(1, self.max_div+1):
-      core = (2.**igen * self.n0 * p)
-      upp_cdfDiv = self.compute_cdf(times - ((igen - 1.)*b), mDiv0, sDiv0)
-      low_cdfDiv = self.compute_cdf(times - (igen*b), mDiv0, sDiv0)
+      core = (2.**igen * self.n0 * params["p"])
+      upp_cdfDiv = self.compute_cdf(times - ((igen - 1.)*b), params["mDiv0"], params["sDiv0"])
+      low_cdfDiv = self.compute_cdf(times - (igen*params["b"]), params["mDiv0"], params["sDiv0"])
       difference = upp_cdfDiv - low_cdfDiv
 
       nDIV[igen,:] = core * sfDie * sfDD * difference
@@ -109,14 +117,14 @@ class Cyton2Model:
     model = []
     for itpt, ht in enumerate(self.ht):
       t_idx = np.where(times == ht)[0][0]
-      for irep in range(self.nreps[itpt]):
+      for _irep in range(self.nreps[itpt]):
         for igen in range(self.exp_max_div+1):
           cell = cells_gen[igen, t_idx]
           model.append(cell)
 
     return np.asfarray(model)
 
-  def extrapolate(self, model_times, params):
+  def extrapolate(self, model_times: types.ExtrapolationTimes, params: types.Parameters) -> types.ExtrapolationResults:
     # Unstimulated death parameters
     mUns = params['mUns']
     sUns = params['sUns']
@@ -186,16 +194,16 @@ class Cyton2Model:
         cells_gen_at_ht[itpt].append(cells_gen[igen, t_idx])
       total_live_cells_at_ht[itpt] = total_live_cells[t_idx]
 
-    res = {
+    return {
       'ext': {  # Extrapolated cell numbers
         'total_live_cells': total_live_cells,
         'cells_gen': cells_gen,
-        'nUNS': nUNS, 'nDIV': nDIV, 'nDES': nDES
+        'nUNS': nUNS,
+        'nDIV': nDIV,
+        'nDES': nDES
       },
       'hts': {  # Collect cell numbers at harvested time points
         'total_live_cells': total_live_cells_at_ht,
         'cells_gen': cells_gen_at_ht
       }
     }
-
-    return res
