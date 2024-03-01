@@ -59,7 +59,7 @@ class ReadData:
 			return False
 
 	@staticmethod
-	def get_experiment_info(worksheet: Worksheet, data_format: bool) -> types.MetaInformation:
+	def get_experiment_info(worksheet: Worksheet, data_format: bool) -> types.ExperimentInfo:
 		"""
 		Collects user defined experiment information.
 
@@ -137,49 +137,8 @@ class ReadData:
 			return exp_info
 		
 		else:
-			# Initialise information dictionary for legacy type data format
-			exp_info: types.LegacyExperimentMetadata = {
-				'stimulus': '',
-				'date': '',
-				'cell_type': '',
-				'comment': ''
-			}
-			# Iterate through first row [A1 - max_col1]
-			col_idx = 0
-			for row_cell_object in worksheet.iter_rows(min_col=1, max_col=worksheet.max_column, min_row=1, max_row=1):
-				for cell in row_cell_object:
-					val = cell.value
-					if val is not None:
-						if val == 'Stimulus' or val == 'stimulus':
-							exp_info['stimulus'] = row_cell_object[col_idx + 1].value
-						elif val == 'Date' or val == 'date':
-							# If date is not specified default to current time
-							if row_cell_object[col_idx + 1].value is None:
-								ts = str(datetime.now().replace(microsecond=0))
-								exp_info['date'] = ts
-							else:
-								exp_info['date'] = row_cell_object[col_idx + 1].value
-						elif val == 'Cell' or val == 'cell':
-							exp_info['cell_type'] = row_cell_object[col_idx + 1].value
-						elif val == 'Comment' or val == 'comment':
-							exp_info['comment'] = row_cell_object[col_idx + 1].value
-					else:
-						if val is None:
-							pass
-						elif val is not None and col_idx == 0:
-							raise Exception("Missing stimulus name!")
-						elif val is not None and col_idx == 1:
-							print("Missing experiment date time. Recording it to current time...")
-							ts = str(datetime.now().replace(microsecond=0))
-							exp_info['date'] = ts
-						elif val is not None and col_idx == 2:
-							raise Exception("Missing cell type!")
-						elif val is not None and col_idx == 3:
-							comment = 'No comment'
-							exp_info['comment'] = comment
-					col_idx += 1
-
-			return exp_info
+			# This branch has been removed to simplify the codebase
+			raise NotImplementedError("The old metadata format is no longer supported")
 
 	@staticmethod
 	def get_condition_names(worksheet: Worksheet, data_format: bool) -> list[str]:
@@ -210,7 +169,7 @@ class ReadData:
 						conditions.append(str(val))
 			return conditions
 
-	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> types.GenerationPerCondition:
+	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> types.MaxGenerationPerCond:
 		"""
 		Collects last generation information per conditions.
 
@@ -223,7 +182,7 @@ class ReadData:
 		if data_format:
 			# There is no way to identify last generation per condition in new data format.
 			# Assume that all conditions are sharing same last generation that user set.
-			for idx in range(len(self.condition_names)):
+			for _idx in range(len(self.condition_names)):
 				generation.append(self.meta_information['last_gen'])
 			return generation
 		else:
@@ -239,7 +198,7 @@ class ReadData:
 			return generation
 
 	def get_time_points(self, worksheet: Worksheet, data_format: bool) -> tuple[
-		types.HarvestedTimes, types.HarvestedTimesReps, types.NumTimePoints
+		types.HarvestTimes, types.HarvestedTimesReps, types.NumTimePoints
 	]:
 		"""
 		Collects harvested time points per conditions.
@@ -319,7 +278,7 @@ class ReadData:
 
 			return harvested_times, harvested_times_reps, num_time_points
 
-	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> types.CellNumberPerGen:
+	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> types.CellPerGensRepsCond:
 		"""
 		Collects main data of the experiment.
 		Sorts cell number data according to icnd, itpt, igen.
@@ -381,7 +340,7 @@ class ReadData:
 			NUMBER_OF_REPLICATES = []
 			for icnd in range(len(self.condition_names)):
 				NUMBER_OF_REPLICATES.append(
-					[len(list(group)) for key, group in groupby(self.harvested_times_reps[icnd])])
+					[len(list(group)) for _key, group in groupby(self.harvested_times_reps[icnd])])
 
 			dataset = [
 				[

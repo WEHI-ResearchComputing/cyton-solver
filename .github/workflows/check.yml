@@ -18,5 +18,8 @@ jobs:
           source .venv/bin/activate
           pip install ./backend
 
+      # Allow the type checker to find our venv
+      - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
+
       # Run the type checker
       - uses: jakebailey/pyright-action@v2

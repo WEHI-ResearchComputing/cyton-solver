@@ -7,17 +7,17 @@ from scipy.stats import sem
 from core.utils import remove_empty
 import cyton.core.types as types
 
-def compute_total_cells(data: types.CellNumberPerGen, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+def compute_total_cells(data: types.CellPerGensRepsCond, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.MaxGenerationPerCond) -> tuple[
 	types.TotalCells, types.TotalCellsReps, types.TotalCellsSem
 ]:
 	"""
 	All parameters are output of file_reader.py object, which consists meta information about the data itself.
 
-	:param data: (nested list) number of cells per generation (4-dimensional array) = data[icnd][itpt][irep][igen]
-	:param conditions: (list) names of condition
-	:param num_tps: (list) number of time points per condition
-	:param gen_per_condition: (list) number of maximum generations per condition
-	:return: (tuple) [average total cells, total cells with replicates, standard error of means]
+	:param data: number of cells per generation (4-dimensional array) = data[icnd][itpt][irep][igen]
+	:param conditions: names of condition
+	:param num_tps: number of time points per condition
+	:param gen_per_condition: number of maximum generations per condition
+	:return: [average total cells, total cells with replicates, standard error of means]
 	"""
 	
 	num_conditions = len(conditions)
@@ -72,8 +72,8 @@ def compute_total_cells(data: types.CellNumberPerGen, conditions: types.Conditio
 
 	return filtered_total_cells, filtered_total_cells_reps, filtered_total_cells_sem
 
-def sort_cell_generations(data: types.CellNumberPerGen, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
-	types.AvgCellPerGen, types.CellNumberPerGen, types.CellsPerGenSem
+def sort_cell_generations(data: types.CellPerGensRepsCond, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+	types.AvgCellPerGen, types.CellPerGensRepsCond, types.CellsPerGenSem
 ]:
 	"""
 	This function organises cell-generation profile.

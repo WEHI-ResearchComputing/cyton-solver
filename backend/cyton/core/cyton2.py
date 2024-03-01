@@ -101,7 +101,7 @@ class Cyton2Model:
     # Calculate gen > 0 cells
     for igen in range(1, self.max_div+1):
       core = (2.**igen * self.n0 * params["p"])
-      upp_cdfDiv = self.compute_cdf(times - ((igen - 1.)*b), params["mDiv0"], params["sDiv0"])
+      upp_cdfDiv = self.compute_cdf(times - ((igen - 1.)*params["b"]), params["mDiv0"], params["sDiv0"])
       low_cdfDiv = self.compute_cdf(times - (igen*params["b"]), params["mDiv0"], params["sDiv0"])
       difference = upp_cdfDiv - low_cdfDiv
 

@@ -20,3 +20,4 @@ dependencies = [
 
 [tool.pyright]
 typeCheckingMode = "strict"
+reportUnnecessaryComparison = false
