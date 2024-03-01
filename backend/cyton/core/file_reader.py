@@ -11,13 +11,13 @@ from cyton.core.utils import remove_empty
 import cyton.core.types as types
 
 class ReadData:
-	meta_information: types.MetaInformation
+	meta_information: types.ExperimentInfo
 	condition_names: list[str]
-	generation_per_condition: types.GenerationPerCondition
-	harvested_times: types.HarvestedTimes
+	generation_per_condition: types.MaxGenerationPerCond
+	harvested_times: types.HarvestTimesPerCondition
 	harvested_times_reps: types.HarvestedTimesReps
 	num_time_points: types.NumTimePoints
-	data: types.CellNumberPerGen
+	data: types.CellPerGensRepsCond
 	
 	def __init__(self, file: str):
 		# Data_Only parameter required to remove equations
@@ -198,7 +198,7 @@ class ReadData:
 			return generation
 
 	def get_time_points(self, worksheet: Worksheet, data_format: bool) -> tuple[
-		types.HarvestTimes, types.HarvestedTimesReps, types.NumTimePoints
+		types.HarvestTimesPerCondition, types.HarvestedTimesReps, types.NumTimePoints
 	]:
 		"""
 		Collects harvested time points per conditions.
@@ -234,12 +234,11 @@ class ReadData:
 				[] for _ in range(len(self.condition_names))
 			]
 			num_time_points = [
-				[] for _ in range(len(self.condition_names))
+				0 for _ in range(len(self.condition_names))
 			]
 			# Remove duplicates in harvested_time_reps
 			for i in range(len(self.condition_names)):
-				harvested_times[i] = set(harvested_times_reps[i])
-				harvested_times[i] = list(sorted(harvested_times[i]))
+				harvested_times[i] = list(sorted(set(harvested_times_reps[i])))
 				num_time_points[i] = len(harvested_times[i])
 
 			return harvested_times, harvested_times_reps, num_time_points
@@ -269,11 +268,10 @@ class ReadData:
 				[] for _ in range(len(self.condition_names))
 			]
 			num_time_points = [
-				[] for _ in range(len(self.condition_names))
+				0 for _ in range(len(self.condition_names))
 			]
 			for i in range(len(self.condition_names)):
-				harvested_times[i] = set(harvested_times_reps[i])
-				harvested_times[i] = list(sorted(harvested_times[i]))
+				harvested_times[i] = list(sorted(set(harvested_times_reps[i])))
 				num_time_points[i] = len(harvested_times[i])
 
 			return harvested_times, harvested_times_reps, num_time_points

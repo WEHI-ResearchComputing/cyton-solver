@@ -72,7 +72,7 @@ def compute_total_cells(data: types.CellPerGensRepsCond, conditions: types.Condi
 
 	return filtered_total_cells, filtered_total_cells_reps, filtered_total_cells_sem
 
-def sort_cell_generations(data: types.CellPerGensRepsCond, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.GenerationPerCondition) -> tuple[
+def sort_cell_generations(data: types.CellPerGensRepsCond, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.MaxGenerationPerCond) -> tuple[
 	types.AvgCellPerGen, types.CellPerGensRepsCond, types.CellsPerGenSem
 ]:
 	"""
