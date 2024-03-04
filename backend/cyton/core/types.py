@@ -74,7 +74,7 @@ class ExperimentInfo(TypedDict):
 
 # Index order is always: condition, timepoint, repetition then generation
 
-type CellPerGensReps = Sequence[Sequence[Sequence[float]]]
+type CellPerGensReps = Sequence[Sequence[Sequence[float | None]]]
 "Cell counts for a single condition, indexed by timepoint, repetition then generation."
 type HarvestTimes = Sequence[float]
 "Time of sample collection for a single condition in hours, indexed by timepoints"

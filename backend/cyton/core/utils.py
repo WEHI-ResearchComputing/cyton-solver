@@ -3,14 +3,21 @@ Last Edit: 11-Feb-2024
 
 This module contains various useful functions in order to process data or create repeated arrays
 """
-from typing import Any, Literal, Sequence
+from typing import Any, Literal, Sequence, Iterable
 
 # Recursively removes empty array from an input deep nested array
-def remove_empty[T: Sequence](l: T) -> T:
-	return list(filter(lambda x: not isinstance(x, (str, list, list)) or x, (remove_empty(x) if isinstance(x, (list, list)) else x for x in l)))
+def remove_empty[T: Sequence](l: Iterable[T]) -> list[T]:
+	return [
+		# Recursively call this on lists
+		remove_empty(x) if isinstance(x, list) else x
+		for x in l
+		# Keep anything that is truthy, or anything that isn't a list or string.
+		# In other words, remove [] and ""
+		if x or not isinstance(x, (str, list))
+	]
 
 # Fill list with 1s - create a check matrix
-def create_check_matrix(l: list[list[list[Any]]]) -> list[list[list[Literal[1]]]]:
+def create_check_matrix(l: Sequence[Sequence[Sequence[Any]]]) -> Sequence[Sequence[Sequence[Literal[1]]]]:
 	for i, sl in enumerate(l):
 		for j, ssl in enumerate(sl):
 			for k, sssl in enumerate(ssl):

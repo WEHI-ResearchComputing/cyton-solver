@@ -5,9 +5,9 @@ Extracts required information from the workbook.
 """
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
-from datetime import datetime
 from itertools import groupby
 from cyton.core.utils import remove_empty
+from typing import SupportsFloat
 import cyton.core.types as types
 
 class ReadData:
@@ -103,31 +103,43 @@ class ReadData:
 					else:
 						# Validate if data make sense
 						if col_idx == 0:
+							if not isinstance(val, int):
+								raise Exception("Number of time points must be an integer")
 							if val <= 0:
 								raise Exception("Number of time points cannot be 0 or negative")
 							else:
 								exp_info['num_tp'] = val
 						elif col_idx == 1:
+							if not isinstance(val, int):
+								raise Exception("Last generation must be an integer")
 							if val <= 0:
 								raise Exception("Last generation must be greater than 0")
 							else:
 								exp_info['last_gen'] = val
 						elif col_idx == 2:
+							if not isinstance(val, int):
+								raise Exception("Number of conditions must be an integer")
 							if val <= 0:
 								raise Exception("Number of condition must to be greater than 0")
 							else:
 								exp_info['num_condition'] = val
 						elif col_idx == 3:
+							if not isinstance(val, int):
+								raise Exception("Number of replicates must be an integer")
 							if val <= 0:
 								raise Exception("Number of replicate must be greater than 0")
 							else:
 								exp_info['num_replicate'] = val
 						elif col_idx == 4:
+							if not isinstance(val, int):
+								raise Exception("Number of beads must be an integer")
 							if val <= 0:
 								raise Exception("Number of beads must be greater than 0")
 							else:
 								exp_info['num_beads'] = val
 						elif col_idx == 5:
+							if not isinstance(val, float):
+								raise Exception("Proportion of gated beads must be a float")
 							if 0.0 <= val <= 1.0:
 								exp_info['prop_bead_gated'] = val
 							else:
@@ -154,7 +166,7 @@ class ReadData:
 		if data_format:
 			cells = worksheet['A12':'A' + str(worksheet.max_row)]
 			for cell in cells:
-				val = cell[0].value
+				val = cell.value
 				if val is not None:
 					# Converts to string in case of rare numeric condition name
 					conditions.append(str(val))
@@ -218,15 +230,16 @@ class ReadData:
 			# Brings sample_names column from the data to check
 			condition_column = worksheet['E2':'E' + str(worksheet.max_row)]
 			for i, cell in enumerate(cells):
-				val = cell[0].value
-				curr_condition_name = str(condition_column[i][0].value)
+				val = cell.value
+				curr_condition_name = str(condition_column[i].value)
 				# If cell has a value means time to move onto next time point
+				tmp = None
 				if val is not None:
 					tmp = val
 					if curr_condition_name in self.condition_names:
 						target_condition_idx = self.condition_names.index(curr_condition_name)
 						harvested_times_reps[target_condition_idx].append(val)
-				else:
+				elif tmp is not None:
 					if curr_condition_name in self.condition_names:
 						target_condition_idx = self.condition_names.index(curr_condition_name)
 						harvested_times_reps[target_condition_idx].append(tmp)
@@ -257,7 +270,7 @@ class ReadData:
 						harvested_times_reps[icnd].append(val)
 
 				# A condition check for moving onto next condition & update icnd, itpt
-				if cell.row % next_condition_break == 0:
+				if row_cell_object[-1].row % next_condition_break == 0:
 					itpt += self.generation_per_condition[icnd] + 3
 					icnd += 1
 					if icnd > len(self.condition_names) - 1:
@@ -305,9 +318,9 @@ class ReadData:
 			for row_cell_object in worksheet.iter_rows(min_col=8, max_col=worksheet.max_column, min_row=2, max_row=worksheet.max_row):
 				for col_idx, cell in enumerate(row_cell_object):
 					val = cell.value
-					curr_condition_name = str(condition_list[row_counter][0].value)
-					curr_time = time_list[row_counter][0].value
-					curr_beads = bead_list[row_counter][0].value
+					curr_condition_name = str(condition_list[row_counter].value)
+					curr_time = time_list[row_counter].value
+					curr_beads = bead_list[row_counter].value
 					# Time point update criteria
 					if curr_time is not None and row_counter > 0 and col_idx == 0:
 						itpt += 1
@@ -319,12 +332,13 @@ class ReadData:
 							raise ArithmeticError(
 								"Empty bead number is detected. Check your number of beads at : time point %.2f, condition %s" % (
 									self.harvested_times[target_condition_idx][itpt], curr_condition_name))
-						elif float(curr_beads) == 0:
-							raise ArithmeticError(
-								"Divide by zero issue detected. Check your number of beads at : time point %.2f, condition %s" % (
-									self.harvested_times[target_condition_idx][itpt], curr_condition_name))
-						if val is not None:
-							val = val * exp_beads / curr_beads
+						if isinstance(val, SupportsFloat) and isinstance(curr_beads, SupportsFloat):
+							if float(curr_beads) == 0:
+								raise ArithmeticError(
+									"Divide by zero issue detected. Check your number of beads at : time point %.2f, condition %s" % (
+										self.harvested_times[target_condition_idx][itpt], curr_condition_name))
+							else:
+								val = float(val) * exp_beads / float(curr_beads)
 						else:
 							val = 0
 						dataset[target_condition_idx][itpt][col_idx].append(val)

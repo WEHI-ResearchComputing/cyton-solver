@@ -53,11 +53,13 @@ def compute_total_cells(data: types.CellPerGensRepsCond, conditions: types.Condi
 	total_cells_reps2 = [[[] for _ in range(max(num_tps))] for _ in range(num_conditions)]
 	for icnd in range(num_conditions):
 		for itpt in range(num_tps[icnd]):
-			tmp = [0 for _ in range(max_length)]
+			tmp = [0. for _ in range(max_length)]
 			for igen in range(gen_per_condition[icnd]+1):
 				for irep, datum in enumerate(data[icnd][itpt][igen]):
+					if not isinstance(datum, (int, float)):
+						raise Exception(f"Unknown data {datum} in condition {icnd}, timepoint {itpt} and generation {igen}")
 					tmp[irep] += datum
-			for idx in range(len(data[icnd][itpt][igen])):
+			for idx in range(len(data[icnd][itpt][gen_per_condition[icnd]])):
 				total_cells_reps[icnd].append(tmp[idx])
 				total_cells_reps2[icnd][itpt].append(tmp[idx])
 	filtered_total_cells_reps = remove_empty(total_cells_reps)
@@ -118,7 +120,7 @@ def sort_cell_generations(data: types.CellPerGensRepsCond, conditions: types.Con
 			for igen in range(gen_per_condition[icnd]+1):
 				for irep, datum in enumerate(data[icnd][itpt][igen]):
 					tmp[irep].append(datum)
-			for idx in range(len(data[icnd][itpt][igen])):
+			for idx in range(len(data[icnd][itpt][gen_per_condition[icnd]])):
 				cell_gens_reps[icnd][itpt].append(tmp[idx])
 
 	filtered_cell_gens_reps = remove_empty(cell_gens_reps)
