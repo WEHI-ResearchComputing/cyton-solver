@@ -20,12 +20,13 @@ jobs:
       
       # Compile using Cython
       - run: |
-        export CFLAGS=$VIRTUAL_ENV/lib/python3.12/site-packages/numpy/core/include/
-        cythonize --inplace backend/core/model.pyx
+          echo $pythonLocation
+          export CFLAGS=$pythonLocation/lib/python3.12/site-packages/numpy/core/include/
+          cythonize --inplace backend/core/model.pyx
 
       # Run the test suite
       - run: |
-        pip install pytest
-        export PYTHONPATH=$PWD
-        cd backend
-        pytest test 
+          pip install pytest
+          export PYTHONPATH=$PWD
+          cd backend
+          pytest test 
