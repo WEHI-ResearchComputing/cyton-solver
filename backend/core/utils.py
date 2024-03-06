@@ -3,6 +3,15 @@ Last Edit: 11-Feb-2024
 
 This module contains various useful functions in order to process data or create repeated arrays
 """
+from itertools import chain
+from typing import Iterable
+
+def flatten(l) -> Iterable:
+	for item in l:
+		if isinstance(item, list):
+			yield from flatten(item)
+		else:
+			yield item
 
 # Recursively removes empty array from an input deep nested array
 def remove_empty(l):
