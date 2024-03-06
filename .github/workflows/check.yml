@@ -28,4 +28,6 @@ jobs:
           pip install pytest
           cd backend
           export PYTHONPATH=$PWD
+          echo $PYTHONPATH
+          python -c 'import sys; print(sys.path)'
           pytest test 
