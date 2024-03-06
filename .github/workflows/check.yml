@@ -12,20 +12,19 @@ jobs:
           python-version: "3.12"
           cache: 'pip'
 
-      # Install dependencies
-      - run: |
-          python -m venv .venv
-          source .venv/bin/activate
+      - name: Install dependencies
+        run: |
           pip install -r backend/requirements.txt
       
-      # Compile using Cython
-      - run: |
+      - name: Compile Cython
+        run: |
           ls $pythonLocation
           export CFLAGS=$pythonLocation/lib/python3.12/site-packages/numpy/core/include/
-          python -m Cython.Build.Cythonize --inplace backend/core/model.pyx
+          cythonize --inplace backend/core/model.pyx
 
-      # Run the test suite
-      - run: |
+      # Run test suite
+      - name: Install dependencies
+        run: |
           pip install pytest
           export PYTHONPATH=$PWD
           cd backend
