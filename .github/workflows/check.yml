@@ -22,8 +22,7 @@ jobs:
           export CPATH=$pythonLocation/lib/python3.12/site-packages/numpy/core/include
           cythonize --inplace backend/core/model.pyx
 
-      # Run test suite
-      - name: Install dependencies
+      - name: Run test suite
         run: |
           pip install pytest
           cd backend
