@@ -20,9 +20,9 @@ jobs:
       
       # Compile using Cython
       - run: |
-          echo $pythonLocation
+          ls $pythonLocation
           export CFLAGS=$pythonLocation/lib/python3.12/site-packages/numpy/core/include/
-          cythonize --inplace backend/core/model.pyx
+          python -m Cython.Build.Cythonize --inplace backend/core/model.pyx
 
       # Run the test suite
       - run: |
