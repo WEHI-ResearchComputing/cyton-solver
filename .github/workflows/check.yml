@@ -26,6 +26,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pytest
-          export PYTHONPATH=$PWD
           cd backend
+          export PYTHONPATH=$PWD
           pytest test 
