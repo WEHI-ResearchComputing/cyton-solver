@@ -18,7 +18,7 @@ jobs:
       
       - name: Compile Cython
         run: |
-          ls $pythonLocation
+          pip install setuptools
           export CFLAGS=$pythonLocation/lib/python3.12/site-packages/numpy/core/include/
           cythonize --inplace backend/core/model.pyx
 
