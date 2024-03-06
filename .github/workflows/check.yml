@@ -18,10 +18,8 @@ jobs:
       
       - name: Compile Cython
         run: |
-          ls $pythonLocation/lib/python3.12/site-packages
-          ls $pythonLocation/lib/python3.12/site-packages/numpy/core/include
           pip install setuptools
-          export CFLAGS=$pythonLocation/lib/python3.12/site-packages/numpy/core/include/
+          export CPATH=$pythonLocation/lib/python3.12/site-packages/numpy/core/include
           cythonize --inplace backend/core/model.pyx
 
       # Run test suite
