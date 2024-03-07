@@ -38,7 +38,8 @@ def fit_model(exp_ht: types.HarvestTimes, cell_gens_reps: types.CellPerGensReps,
     """
     nreps = [len(l) for l in cell_gens_reps[0]]
     params, paramExcl = get_parameters(settings["parameters"], settings["bounds"], settings["vary"])
-    model = Cyton2Model(exp_ht, N0, max_div_per_conditions, DT, nreps)
+    n0 = calc_n0(cell_gens_reps[0])
+    model = Cyton2Model(exp_ht, n0, max_div_per_conditions, DT, nreps)
 
     return fit(exp_ht, cell_gens_reps, params, paramExcl, model)
 

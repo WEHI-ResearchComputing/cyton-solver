@@ -12,6 +12,7 @@ jobs:
           python-version: "3.12"
           cache: 'pip'
 
+<<<<<<< HEAD
       # Check that the package installs
       - run: |
           python -m venv .venv
@@ -25,3 +26,21 @@ jobs:
       - uses: jakebailey/pyright-action@v2.2.1
         with:
           version: 1.1.352
+=======
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+      
+      - name: Compile Cython
+        run: |
+          pip install setuptools
+          export CPATH=$pythonLocation/lib/python3.12/site-packages/numpy/core/include
+          cythonize --inplace backend/core/model.pyx
+
+      - name: Run test suite
+        run: |
+          pip install pytest
+          cd backend
+          export PYTHONPATH=$PWD
+          pytest test 
+>>>>>>> main

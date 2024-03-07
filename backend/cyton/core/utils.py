@@ -5,6 +5,13 @@ This module contains various useful functions in order to process data or create
 """
 from typing import Any, Literal, Sequence, Iterable
 
+def flatten(l: Iterable) -> Iterable:
+	for item in l:
+		if isinstance(item, list):
+			yield from flatten(item)
+		else:
+			yield item
+
 # Recursively removes empty array from an input deep nested array
 def remove_empty[T: Sequence](l: Iterable[T]) -> list[T]:
 	return [

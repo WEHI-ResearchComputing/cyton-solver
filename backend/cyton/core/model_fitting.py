@@ -12,6 +12,7 @@ from core.cyton2 import Cyton2Model
 from core.settings import MAX_NFEV, LM_FIT_KWS, ITER_SEARCH, DT
 from cyton.core import types
 from numpy.typing import NDArray
+from core.utils import flatten
 
 # Model: Residual
 def residual(pars: lmf.Parameters, x: NDArray, data: NDArray, model: Cyton2Model) -> NDArray[np.float_]:
@@ -26,6 +27,13 @@ def get_parameters(pars: types.Parameters, bounds: types.Bounds, vary: types.Fit
 	paramExcl = [p for p in params if not params[p].vary]  # List of locked parameters
 
 	return params, paramExcl
+
+def calc_n0(cell_gens_reps: types.CellPerGensReps) -> float:
+    """
+    Calculates N0, the initial number of cells.
+    This is taken to be the average cell numbers at 0th time point.
+    """
+    return np.mean([sum(flatten(rep)) for rep in cell_gens_reps[0]])
 
 def get_times(exp_ht: types.HarvestTimes) -> types.ExtrapolationTimes:
     t0 = 0
@@ -47,7 +55,7 @@ def extrapolate(model: Cyton2Model, times: types.ExtrapolationTimes, pars: types
 def fit(exp_ht: types.HarvestTimes, cell_gens_reps: types.CellPerGensReps, params: lmf.Parameters, paramExcl: types.ExcludedParameters, model: Cyton2Model) -> types.Parameters:
 
     x_gens = np.array(exp_ht[0])
-    y_cells = np.array(cell_gens_reps[0]).flatten()
+    y_cells = np.fromiter(flatten(cell_gens_reps[0]), dtype=float)
 
     rng = np.random.RandomState(seed=894375982)
     candidates = {'result': [], 'residual': []}

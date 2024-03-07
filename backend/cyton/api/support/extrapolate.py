@@ -4,7 +4,7 @@ Last Edit: 21-Feb-2024
 Function for Endpoint: Extrapolate
 """
 from cyton.core.model_fitting import get_times, extrapolate
-from cyton.core.settings import N0, DT
+from cyton.core.settings import DT
 from cyton.core import types
 from cyton.core.cyton2 import Cyton2Model
 
@@ -21,8 +21,8 @@ def extrapolate_model(exp_ht: types.HarvestTimes, max_div: types.MaxGeneration, 
     - dict: A dictionary containing extrapolated data
     """
     times = get_times(exp_ht)
-    # nreps is not needed for extrapolation
-    model = Cyton2Model(exp_ht, N0, max_div, DT)
+    n0 = calc_n0(nreps[0])
+    model = Cyton2Model(exp_ht, n0, max_div, DT)
     results = extrapolate(model, times, params)
     
     # Convert the NumPy arrays to regular lists to allow serializing to JSON
