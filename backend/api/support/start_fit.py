@@ -4,8 +4,8 @@ Last Edit: 11-Feb-2024
 Function for Endpoint: Start Fit
 """
 import pandas as pd
-from core.model_fitting import get_parameters, get_model, fit
-from core.settings import N0, DT
+from core.model_fitting import calc_n0, get_parameters, get_model, fit
+from core.settings import DT
 
 def extract_experiment_data(data):
     return data.get('exp_ht'), data.get('cell_gens_reps'), data.get('max_div_per_conditions')
@@ -40,7 +40,8 @@ def fit_model(exp_ht, cell_gens_reps, max_div_per_conditions, settings):
     nreps = [len(l) for l in cell_gens_reps[0]]
     parameters, bounds, vary = extract_settings(settings)
     params, paramExcl = get_parameters(parameters, bounds, vary)
-    model = get_model(exp_ht, N0, max_div_per_conditions, DT, nreps)
+    n0 = calc_n0(cell_gens_reps[0])
+    model = get_model(exp_ht, n0, max_div_per_conditions, DT, nreps)
 
     return fit(exp_ht, cell_gens_reps, params, paramExcl, model)
 

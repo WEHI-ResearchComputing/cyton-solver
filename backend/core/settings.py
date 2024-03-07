@@ -53,10 +53,9 @@ DEFAULT_VARY = {  # True = Subject to change; False = Lock parameter
 # Model Fitting Settings
 # =====================
 
-N0 = 10000			  # Initial number of cells
 DT = 0.5              # [Cyton Model] Time step
 
-ITER_SEARCH = 1		  # [Cyton Model] Number of initial search (100 is usually a good guess)
+ITER_SEARCH = 30      # [Cyton Model] Number of initial search (100 is usually a good guess)
 
 MAX_NFEV = None 	  # [LMFIT] Maximum number of function evaluation
 

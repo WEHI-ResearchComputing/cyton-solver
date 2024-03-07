@@ -3,8 +3,8 @@ Last Edit: 21-Feb-2024
 
 Function for Endpoint: Extrapolate
 """
-from core.model_fitting import get_model, get_times, extrapolate
-from core.settings import N0, DT
+from core.model_fitting import calc_n0, get_model, get_times, extrapolate
+from core.settings import DT
 from core.settings import DEFAULT_EXP_HT, DEFAULT_CELL_GENS_REPS, DEFAULT_MAX_DIV_PER_CONDITIONS
 
 def extract_experiment_data(data):
@@ -27,7 +27,8 @@ def extrapolate_model(exp_ht, max_div_per_conditions, nreps, params):
     - dict: A dictionary containing extrapolated data
     """
     times = get_times(exp_ht)
-    model = get_model(exp_ht, N0, max_div_per_conditions, DT, nreps)
+    n0 = calc_n0(nreps[0])
+    model = get_model(exp_ht, n0, max_div_per_conditions, DT, nreps)
     ext_total_live_cells, ext_cells_per_gen, hts_total_live_cells, hts_cells_per_gen = extrapolate(model, times, params)
     
     # Convert the NumPy arrays to regular lists to allow serializing to JSON

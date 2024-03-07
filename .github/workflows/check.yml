@@ -1,0 +1,30 @@
+name: Python package
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+      
+      - name: Compile Cython
+        run: |
+          pip install setuptools
+          export CPATH=$pythonLocation/lib/python3.12/site-packages/numpy/core/include
+          cythonize --inplace backend/core/model.pyx
+
+      - name: Run test suite
+        run: |
+          pip install pytest
+          cd backend
+          export PYTHONPATH=$PWD
+          pytest test 

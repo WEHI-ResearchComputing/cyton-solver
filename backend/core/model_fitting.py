@@ -6,10 +6,11 @@ Model Fitting
 import tqdm
 import pandas as pd
 import numpy as np
-import multiprocessing as mp
 import lmfit as lmf
-from core.cyton2 import Cyton2Model
+from core.model import Cyton2Model
+# from core.cyton2 import Cyton2Model
 from core.settings import MAX_NFEV, LM_FIT_KWS, ITER_SEARCH, DT
+from core.utils import flatten
 
 # Model: Residual
 def residual(pars, x, data=None, model=None):
@@ -30,6 +31,13 @@ def get_parameters(pars, bounds, vary):
 	paramExcl = [p for p in params if not params[p].vary]  # List of locked parameters
 
 	return params, paramExcl
+
+def calc_n0(cell_gens_reps) -> int:
+    """
+    Calculates N0, the initial number of cells.
+    This is taken to be the average cell numbers at 0th time point.
+    """
+    return np.mean([sum(flatten(rep)) for rep in cell_gens_reps[0]])
 
 def get_model(exp_ht, n0, max_div_per_conditions, dt, nreps):
     return Cyton2Model(exp_ht[0], n0, max_div_per_conditions[0], dt, nreps)
@@ -53,7 +61,7 @@ def extrapolate(model, times, pars):
 def fit(exp_ht, cell_gens_reps, params, paramExcl, model) :
 
     x_gens = np.array(exp_ht[0])
-    y_cells = np.array(cell_gens_reps[0]).flatten()
+    y_cells = np.fromiter(flatten(cell_gens_reps[0]), dtype=float)
 
     rng = np.random.RandomState(seed=894375982)
     candidates = {'result': [], 'residual': []}
