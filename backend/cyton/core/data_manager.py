@@ -4,11 +4,11 @@ Last Edit: 11-Feb-2024
 Reshape an input data format to a 4D array (icnd, itpt, igen, irep)
 """
 from scipy.stats import sem
-from core.utils import remove_empty
-import cyton.core.types as types
+from cyton.core.utils import remove_empty
+from cyton.core.types import *
 
-def compute_total_cells(data: types.CellPerGensRepsCond, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.MaxGenerationPerCond) -> tuple[
-	types.TotalCells, types.TotalCellsReps, types.TotalCellsSem
+def compute_total_cells(data: PerCond[PerTime[PerRep[PerGen[CellCount | None]]]], conditions: Conditions, num_tps: NumTimePoints, gen_per_condition: PerCond[MaxGeneration]) -> tuple[
+	PerCond[PerTime[CellTotal]], PerCond[Reps[CellTotal]], PerCond[PerTime[CellTotalSem]]
 ]:
 	"""
 	All parameters are output of file_reader.py object, which consists meta information about the data itself.
@@ -74,8 +74,8 @@ def compute_total_cells(data: types.CellPerGensRepsCond, conditions: types.Condi
 
 	return filtered_total_cells, filtered_total_cells_reps, filtered_total_cells_sem
 
-def sort_cell_generations(data: types.CellPerGensRepsCond, conditions: types.Conditions, num_tps: types.NumTimePoints, gen_per_condition: types.MaxGenerationPerCond) -> tuple[
-	types.AvgCellPerGen, types.CellPerGensRepsCond, types.CellsPerGenSem
+def sort_cell_generations(data: PerCond[PerTime[PerRep[PerGen[CellCount | None]]]], conditions: Conditions, num_tps: NumTimePoints, gen_per_condition: PerCond[MaxGeneration]) -> tuple[
+	PerCond[PerTime[PerGen[CellAverage]]], PerCond[PerTime[PerRep[PerGen[CellCount]]]], PerCond[PerTime[PerGen[CellTotalSem]]]
 ]:
 	"""
 	This function organises cell-generation profile.

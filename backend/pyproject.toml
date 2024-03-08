@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools", "setuptools-scm", "Cython", "numpy"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -21,3 +21,14 @@ dependencies = [
 [tool.pyright]
 typeCheckingMode = "strict"
 reportUnnecessaryComparison = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownMemberType = false
+reportMissingTypeStubs = false
+reportUnknownParameterType = false
+reportMissingTypeArgument = false
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]

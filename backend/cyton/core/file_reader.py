@@ -8,16 +8,16 @@ from openpyxl.worksheet.worksheet import Worksheet
 from itertools import groupby
 from cyton.core.utils import remove_empty
 from typing import SupportsFloat
-import cyton.core.types as types
+from cyton.core.types import *
 
 class ReadData:
-	meta_information: types.ExperimentInfo
-	condition_names: list[str]
-	generation_per_condition: types.MaxGenerationPerCond
-	harvested_times: types.HarvestTimesPerCondition
-	harvested_times_reps: types.HarvestedTimesReps
-	num_time_points: types.NumTimePoints
-	data: types.CellPerGensRepsCond
+	meta_information: ExperimentInfo
+	condition_names: Conditions
+	generation_per_condition: PerCond[MaxGeneration]
+	harvested_times: PerCond[PerTime[HarvestTime]]
+	harvested_times_reps: PerCond[Reps[HarvestTime]]
+	num_time_points: NumTimePoints
+	data: PerCond[PerTime[PerRep[PerGen[CellCount]]]]
 	
 	def __init__(self, file: str):
 		# Data_Only parameter required to remove equations
@@ -59,7 +59,7 @@ class ReadData:
 			return False
 
 	@staticmethod
-	def get_experiment_info(worksheet: Worksheet, data_format: bool) -> types.ExperimentInfo:
+	def get_experiment_info(worksheet: Worksheet, data_format: bool) -> ExperimentInfo:
 		"""
 		Collects user defined experiment information.
 
@@ -71,7 +71,7 @@ class ReadData:
 
 		if data_format:
 			# Initialise information dictionary
-			exp_info: types.ExperimentInfo = {
+			exp_info: ExperimentInfo = {
 				'num_tp': 0,
 				'last_gen': 0,
 				'num_condition': 0,
@@ -153,7 +153,7 @@ class ReadData:
 			raise NotImplementedError("The old metadata format is no longer supported")
 
 	@staticmethod
-	def get_condition_names(worksheet: Worksheet, data_format: bool) -> list[str]:
+	def get_condition_names(worksheet: Worksheet, data_format: bool) -> Conditions:
 		"""
 		Collects experiment condition names (e.g. Wildtype-1U, Wildtype-Unstim)
 
@@ -181,7 +181,7 @@ class ReadData:
 						conditions.append(str(val))
 			return conditions
 
-	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> types.MaxGenerationPerCond:
+	def get_generation_information(self, worksheet: Worksheet, data_format: bool) -> PerCond[MaxGeneration]:
 		"""
 		Collects last generation information per conditions.
 
@@ -210,7 +210,7 @@ class ReadData:
 			return generation
 
 	def get_time_points(self, worksheet: Worksheet, data_format: bool) -> tuple[
-		types.HarvestTimesPerCondition, types.HarvestedTimesReps, types.NumTimePoints
+		PerCond[PerTime[HarvestTime]], PerCond[Reps[HarvestTime]], NumTimePoints
 	]:
 		"""
 		Collects harvested time points per conditions.
@@ -289,7 +289,7 @@ class ReadData:
 
 			return harvested_times, harvested_times_reps, num_time_points
 
-	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> types.CellPerGensRepsCond:
+	def get_cell_number(self, worksheet: Worksheet, data_format: bool) -> PerCond[PerTime[PerRep[PerGen[CellCount]]]]:
 		"""
 		Collects main data of the experiment.
 		Sorts cell number data according to icnd, itpt, igen.

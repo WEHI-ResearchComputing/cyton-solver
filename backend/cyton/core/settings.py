@@ -1,5 +1,8 @@
 
-from cyton.core.types import Parameters, Bounds, FittableParams, LmFitKwargs
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+	from cyton.core.types import Parameters, Bounds, FittableParams, LmFitKwargs
 
 # =====================
 # Extrapolation Default Settings
@@ -8,6 +11,7 @@ from cyton.core.types import Parameters, Bounds, FittableParams, LmFitKwargs
 
 DEFAULT_EXP_HT = [0, 12, 24, 36, 48, 72, 96, 120, 144]
 DEFAULT_MAX_DIV = 10
+DEFAULT_N0 = 10_000
 
 # =====================
 # Model Settings
