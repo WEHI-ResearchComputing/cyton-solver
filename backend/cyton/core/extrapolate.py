@@ -1,12 +1,7 @@
-from typing import TYPE_CHECKING
 from cyton.core.settings import DEFAULT_EXP_HT, DEFAULT_MAX_DIV, DEFAULT_N0, DT
 from cyton.core.types import HarvestTime, PerTime, ExtrapolationTimes, ExtrapolationResults, Parameters
 import numpy as np
-
-if TYPE_CHECKING:
-    from cyton.core.cyton2 import Cyton2Model
-else:
-    from cyton.core.model import Cyton2Model
+from cyton.core.model import Cyton2Model
 
 def get_times(exp_ht: PerTime[HarvestTime]) -> ExtrapolationTimes:
     """
