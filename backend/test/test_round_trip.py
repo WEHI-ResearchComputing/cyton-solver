@@ -3,9 +3,8 @@ from cyton.api.support.upload import parse_file
 from numpy.testing import assert_approx_equal
 from pathlib import Path
 
-def test_round_trip():
-    data_location = Path(__file__).parent / "SH1.119.xlsx"
-    experiment_data = parse_file(str(data_location))
+def test_round_trip(data_path: Path):
+    experiment_data = parse_file(str(data_path))
     cond_data = experiment_data.slice_condition_idx(0)
     
     model = cond_data.get_model()
