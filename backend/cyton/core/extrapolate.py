@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from cyton.core.settings import DEFAULT_EXP_HT, DEFAULT_MAX_DIV, DEFAULT_N0, DT, DEFAULT_PARS
+from cyton.core.settings import DEFAULT_EXP_HT, DEFAULT_MAX_DIV, DEFAULT_N0, DT
 from cyton.core.types import HarvestTime, PerTime, ExtrapolationTimes, ExtrapolationResults, Parameters
 import numpy as np
 

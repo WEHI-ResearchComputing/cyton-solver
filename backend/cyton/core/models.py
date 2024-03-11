@@ -1,11 +1,12 @@
 from __future__ import annotations
+from cyton.core.settings import DT
+from cyton.core.utils import flatten
 from cyton.core.extrapolate import get_times
 from cyton.core.model_fitting import fit
 from cyton.core.types import *
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import lmfit as lmf
+from cyton.core.model import Cyton2Model
+from pydantic import BaseModel
+import lmfit as lmf
 
 class ExperimentSettings(BaseModel):
     parameters: Parameters
@@ -77,7 +78,10 @@ class ExperimentData(BaseModel):
     exp_ht_reps: PerCond[Reps[HarvestTime]]
     max_div_per_conditions: PerCond[MaxGeneration]
     conditions: Conditions
-    exp_num_tp: NumTimePoints
+    # exp_num_tp: NumTimePoints
+    # We can't use NumTimePoints do due to a bug in Pydantic: https://github.com/pydantic/pydantic/issues/8984
+    exp_num_tp: PerCond[int]
+    "Number of time points, indexed by condition"
 
     total_cells: PerCond[PerTime[CellTotal]]
     total_cells_reps: PerCond[Reps[CellTotal]]

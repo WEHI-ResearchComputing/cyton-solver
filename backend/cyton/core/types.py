@@ -1,38 +1,28 @@
-from typing import TypedDict, Sequence, TYPE_CHECKING
+from typing import TypedDict, Sequence
 from numpy.typing import NDArray
 import numpy as np
-from pydantic import BaseModel
-from cyton.core.utils import flatten
-from cyton.core.settings import DT
-
-if TYPE_CHECKING:
-    from cyton.core.cyton2 import Cyton2Model
-else:
-    from cyton.core.model import Cyton2Model
-
-type Number = int | float
 
 class Parameters(TypedDict):
     # These are floats
     mUns: float
     "Median unstimulated death time"
-    sUns: Number 
+    sUns: float 
     "Log variance of unstimulated death time"
-    mDiv0: Number
+    mDiv0: float
     "Median time to first division"
-    sDiv0: Number
+    sDiv0: float
     "Log variance of time to first division"
-    mDD: Number
+    mDD: float
     "Median time to division destiny"
-    sDD: Number
+    sDD: float
     "Time to division destiny"
-    mDie: Number
+    mDie: float
     "Median time to death"
-    sDie: Number
+    sDie: float
     "Log variance of the time to death"
-    b: Number
+    b: float
     "Subsequent division time"
-    p: Number
+    p: float
     "Proportion of activated cells"
 
 class Bounds(TypedDict):
@@ -56,7 +46,7 @@ class FittableParams(TypedDict):
 
 
 class LegacyExperimentMetadata(TypedDict):
-    "Unused metadata format"
+    "Old metadata format"
     stimulus: str
     date: str
     cell_type: str
@@ -64,7 +54,6 @@ class LegacyExperimentMetadata(TypedDict):
 
 class ExperimentInfo(TypedDict):
     "Modern metadata format"
-
     num_tp: int
     "Number of timepoints"
     last_gen: int
@@ -79,7 +68,6 @@ class ExperimentInfo(TypedDict):
     "Proportion of beads that are gated"
 
 # Index order is always: condition, timepoint, repetition then generation
-
 type PerCond[T] = Sequence[T]
 "Something that is indexed by condition"
 type PerGen[T] = Sequence[T]
@@ -91,63 +79,24 @@ type PerRep[T] = Sequence[T]
 type Reps[T] = Sequence[T]
 "Something that is indexed by time point, but also with each value repeated per replicate"
 
-# Harvest Times types
 type HarvestTime = float
 "Time of sample collection in hours"
-# type HarvestTimes = Sequence[HarvestTime]
-# "Time of sample collection for a single condition in hours, indexed by timepoints"
-# type HarvestTimePerCond = Sequence[HarvestTimes]
-# "Time of sample collection in hours, indexed by conditions then timepoints"
-# type HarvestTimesReps = Sequence[HarvestTime]
-# "Time of sample collection in hours, indexed by timepoints. The inner list of timepoints is repeated for each replicate."
-# type HarvestTimesRepsPerCond = Sequence[HarvestTimesReps]
-# "Time of sample collection in hours, indexed by conditions, then timepoints. The inner list of timepoints is repeated for each replicate."
-
-# Generation types
 type MaxGeneration = int
 "Maximum number of generations, for a single condition"
-# type MaxGenerationPerCond = Sequence[MaxGeneration]
-# "Maximum number of generations, indexed per condition"
-
-# Cell counts
 type CellCount = float
 "Number of cells. This can be a float because the assay may not return discretized counts."
-# type CellPerGensReps = PerTime[PerRep[PerGen[CellCount]]]
-# "Cell counts for a single condition, indexed by timepoint, repetition then generation."
-# type CellPerGensRepsCond = Sequence[CellPerGensReps]
-"Number of cells, indexed by condition, timepoint, repetition then generation."
-
-# Miscellaneous types
-type NumTimePoints = Sequence[int]
+type NumTimePoints = PerCond[int]
 "Number of time points, indexed by condition"
 type Conditions = Sequence[str]
 "Condition names, in the order of the dataset"
-# It is correct that these are floats and not integers!
 type NReps = PerTime[int]
 "Number of replicates, indexed by time point."
-
-# Total cell counts, summed over all generations
 type CellTotal = float
 "Total number of cells, summed over all generations."
 type CellAverage = float
 "Average number of cells over all replicates"
 type CellTotalSem = float
 "Standard error of the mean"
-# type TotalCells = Sequence[CellTotal]
-# "Total number of cells, summed over all generations, indexed by timepoint."
-# type TotalCellsPerCond = Sequence[TotalCells]
-# "Total number of cells, summed over all generations, indexed by condition, then timepoint."
-# type TotalCellsReps = Sequence[CellTotal]
-# "Total number of cells, summed over all generations, indexed by timepoint. The inner list of timepoints is repeated for each replicate."
-# type TotalCellsRepsPerCond = Sequence[TotalCellsReps]
-# "Total number of cells, summed over all generations, indexed by condition, then timepoint. The inner list of timepoints is repeated for each replicate."
-# type TotalCellsSem = Sequence[Sequence[float]]
-# "Standard error of the mean. Indexed by condition, then timepoint."
-
-# type AvgCellPerGen = Sequence[Sequence[Sequence[float]]]
-# "Average number of cells. Indexed by condition, then timepoint, then generation."
-# type CellsPerGenSem = Sequence[Sequence[float]]
-# "Standard error of the mean. Indexed by condition, then timepoint."
 
 class ExtrapolatedData(TypedDict):
     ext_total_live_cells: NDArray[np.float64]
@@ -156,7 +105,7 @@ class ExtrapolatedData(TypedDict):
     "Extrapolated number of total live cells. Indexed by generation then extrapolated timepoint."
     hts_total_live_cells: NDArray[np.float64]
     "Extrapolated number of total live cells at the experimental timepoint. Indexed by experimental timepoint."
-    hts_cells_per_gen: Sequence[Sequence[float]]
+    hts_cells_per_gen: PerGen[PerTime[float]]
     "Extrapolated number of total live cells. Indexed by generation then experimental timepoint."
 
 # Extrapolation
@@ -177,7 +126,7 @@ class ExtrapolatedTimeResults(TypedDict):
 class HarvestTimeResults(TypedDict):
     total_live_cells: NDArray[np.float64]
     "Cell numbers per timepoint, summed over all generations. 1d array."
-    cells_gen: Sequence[Sequence[float]]
+    cells_gen: PerGen[PerTime[float]]
     "2D array of cell numbers indexed by generation (first axis) and timepoint (second axis)."
 
 class ExtrapolationResults(TypedDict):

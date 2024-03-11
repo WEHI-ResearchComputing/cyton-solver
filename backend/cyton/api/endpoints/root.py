@@ -1,9 +1,9 @@
 import os, tempfile, uuid
 from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException, Request
-from backend.cyton.core.types import Parameters
+from cyton.core.types import Parameters
 from cyton.api.support.logger import initialize_logger
 from cyton.api.support.upload import parse_file
-from backend.cyton.api.support.background_fit import start_background_fit
+from cyton.api.support.background_fit import start_background_fit
 from cyton.api.support.default_settings import get_default_settings
 from cyton.api.support.check_status import get_fitted_parameters
 from cyton.api.types import TaskId

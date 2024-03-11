@@ -3,7 +3,7 @@ Last Edit: 21-Feb-2024
 
 Function for Endpoint: Upload
 """
-from cyton.core.file_reader import ReadData
+from cyton.core.file_reader import get_read_data
 from cyton.core.data_manager import compute_total_cells, sort_cell_generations
 from cyton.core.types import *
 from cyton.core.models import ExperimentData
@@ -18,7 +18,7 @@ def parse_file(temp_file_path: str) -> ExperimentData:
     Returns:
     - dict: A dictionary containing experiment data extracted from the file.
     """
-    data_reader = ReadData(temp_file_path)
+    data_reader = get_read_data(temp_file_path)
     exp_ht = data_reader.harvested_times
     exp_ht_reps = data_reader.harvested_times_reps
     max_div_per_conditions = data_reader.generation_per_condition
