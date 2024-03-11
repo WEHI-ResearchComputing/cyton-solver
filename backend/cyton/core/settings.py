@@ -1,21 +1,24 @@
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+	from cyton.core.types import Parameters, Bounds, FittableParams, LmFitKwargs
+
 # =====================
 # Extrapolation Default Settings
 # ========
 # =============
 
 DEFAULT_EXP_HT = [0, 12, 24, 36, 48, 72, 96, 120, 144]
-
-DEFAULT_CELL_GENS_REPS = 10
-
-DEFAULT_MAX_DIV_PER_CONDITIONS = 10
+DEFAULT_MAX_DIV = 10
+DEFAULT_N0 = 10_000
 
 # =====================
 # Model Settings
 # =====================
 
 # Parameters
-DEFAULT_PARS = {
+DEFAULT_PARS: Parameters = {
 		'mUns': 100_000, 'sUns': 1E-10,  # Unstimulated death time
 		'mDiv0': 30, 'sDiv0': 0.2,     # Time to first division
 		'mDD': 60, 'sDD': 0.3,         # Time to division destiny
@@ -23,7 +26,7 @@ DEFAULT_PARS = {
 		'b': 10, 'p': 1                # Subsequent division time & Proportion of activated cells
 	}
 
-DEFAULT_BOUNDS = {
+DEFAULT_BOUNDS: Bounds = {
 		'lb': {  # Lower bounds
 			'mUns': 1E-2, 'sUns': 1E-2,
 			'mDiv0': 1E-2, 'sDiv0': 1E-2,
@@ -40,7 +43,7 @@ DEFAULT_BOUNDS = {
 		}
 	}
 
-DEFAULT_VARY = {  # True = Subject to change; False = Lock parameter
+DEFAULT_VARY: FittableParams = {  # True = Subject to change; False = Lock parameter
 		'mUns': False, 'sUns': False,  # This is Cyton1.5 specific parameters. In Cyton2, this is not used!
 		'mDiv0': True, 'sDiv0': True,
 		'mDD': True, 'sDD': True,
@@ -53,14 +56,13 @@ DEFAULT_VARY = {  # True = Subject to change; False = Lock parameter
 # Model Fitting Settings
 # =====================
 
-N0 = 10000			  # Initial number of cells
 DT = 0.5              # [Cyton Model] Time step
 
-ITER_SEARCH = 1		  # [Cyton Model] Number of initial search (100 is usually a good guess)
+ITER_SEARCH = 30      # [Cyton Model] Number of initial search (100 is usually a good guess)
 
 MAX_NFEV = None 	  # [LMFIT] Maximum number of function evaluation
 
-LM_FIT_KWS = {        # [LMFIT/SciPy] Key-word arguements pass to LMFIT minimizer for Levenberg-Marquardt algorithm
+LM_FIT_KWS: LmFitKwargs = {        # [LMFIT/SciPy] Key-word arguements pass to LMFIT minimizer for Levenberg-Marquardt algorithm
     # 'ftol': 1E-10,  # Relative error desired in the sum of squares. DEFAULT: 1.49012E-8
     # 'xtol': 1E-10,  # Relative error desired in the approximate solution. DEFAULT: 1.49012E-8
     # 'gtol': 0.0,    # Orthogonality desired between the function vector and the columns of the Jacobian. DEFAULT: 0.0
