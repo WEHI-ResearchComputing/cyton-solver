@@ -9,11 +9,18 @@ from pydantic import BaseModel
 import lmfit as lmf
 
 class ExperimentSettings(BaseModel):
+    """
+    Settings that define how the model will be fitted
+    """
     parameters: Parameters
+    "Initial parameter estimates"
     bounds: Bounds
     vary: FittableParams
 
     def get_lmf_parameters(self) -> tuple[lmf.Parameters, ExcludedParameters]:
+        """
+        Generate the data structures needed by the lmfit library
+        """
         params = lmf.Parameters()
         for par in self.parameters:
             params.add(par, value=self.parameters[par], min=self.bounds['lb'][par], max=self.bounds['ub'][par], vary=self.vary[par])
@@ -39,10 +46,15 @@ class SingleConditionData(BaseModel):
     cell_gens_sem: PerTime[PerGen[CellTotalSem]]
 
     def get_times(self) -> ExtrapolationTimes:
+        """
+        Gets the times over which the model will be extrapolated
+        """
         return get_times(self.exp_ht)
 
     def calc_nreps(self) -> NReps:
-        # See type description for details
+        """
+        Calculate the number of replicates per timepoint
+        """
         return [len(l) for l in self.cell_gens_reps]
 
     def calc_n0(self) -> float:
@@ -62,10 +74,16 @@ class SingleConditionData(BaseModel):
         )
 
     def fit_model(self, model: Cyton2Model, settings: ExperimentSettings) -> Parameters:
+        """
+        Fits the model given some settings, and returns the fitted results
+        """
         params, paramExcl = settings.get_lmf_parameters()
         return fit(self.exp_ht, self.cell_gens_reps, params, paramExcl, model)
 
     def extrapolate_model(self, model: Cyton2Model, params: Parameters) -> ExtrapolationResults:
+        """
+        Predicts cell counts for harvest times saved in exp_ht
+        """
         times = self.get_times()
         return model.extrapolate(times, params)
 
@@ -93,7 +111,8 @@ class ExperimentData(BaseModel):
 
     def slice_condition_idx(self, condition_index: int) -> SingleConditionData:
         """
-        Get all the data for a single condition index
+        Get all the data for a single condition index.
+        This is needed since the model is fit separately for each condition.
         Params:
             condition: A condition index
         """

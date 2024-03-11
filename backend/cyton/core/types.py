@@ -3,7 +3,9 @@ from numpy.typing import NDArray
 import numpy as np
 
 class Parameters(TypedDict):
-    # These are floats
+    """
+    Statistical parameters for the cyton model
+    """
     mUns: float
     "Median unstimulated death time"
     sUns: float 
@@ -32,7 +34,10 @@ class Bounds(TypedDict):
     "Upper bound"
 
 class FittableParams(TypedDict):
-    "True if a parameter is fittable. See Parameters class for details."
+    """
+    Dictionary of parameters, each of which is True if that parameter is fittable.
+    See Parameters class for details.
+    """
     mUns: bool
     sUns: bool
     mDiv0: bool
@@ -43,7 +48,6 @@ class FittableParams(TypedDict):
     sDie: bool
     b: bool
     p: bool
-
 
 class LegacyExperimentMetadata(TypedDict):
     "Old metadata format"
