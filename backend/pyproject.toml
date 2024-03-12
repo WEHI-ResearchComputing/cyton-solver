@@ -30,6 +30,7 @@ reportUnknownMemberType = false
 reportMissingTypeStubs = false
 reportUnknownParameterType = false
 reportMissingTypeArgument = false
+reportWildcardImportFromLibrary = false
 
 [tool.pytest.ini_options]
 testpaths = [
