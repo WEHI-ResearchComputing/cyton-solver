@@ -5,6 +5,7 @@ Cyton2 Algorithm Model
 """
 
 from cyton.core.types import *
+from cyton.core.models import ExtrapolationResults
 
 class Cyton2Model:
     t0: float

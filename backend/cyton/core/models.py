@@ -143,3 +143,9 @@ class ExperimentData(BaseModel):
             raise Exception(f"Unknown condition {condition}. Known conditions are: {self.conditions}")
 
         return self.slice_condition_idx(condition_index)
+
+class ExtrapolationResults(BaseModel, arbitrary_types_allowed=True):
+    ext: ExtrapolatedTimeResults
+    "Predicted data for extrapolated timepoints"
+    hts: HarvestTimeResults
+    "Predicted data for experimental harvested timepoints"
