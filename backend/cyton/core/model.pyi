@@ -31,13 +31,13 @@ class Cyton2Model:
     ):
         ...
 
-    def compute_pdf(self, times: ExtrapolationTimes, mu: float, sig: float) -> NDArray[np.float_]:
+    def compute_pdf(self, times: ExtrapolationTimes, mu: float, sig: float) -> NpNDArrayFp64:
         ...
 
-    def compute_cdf(self, times: ExtrapolationTimes, mu: float, sig: float) -> NDArray[np.float_]:
+    def compute_cdf(self, times: ExtrapolationTimes, mu: float, sig: float) -> NpNDArrayFp64:
         ...
 
-    def compute_sf(self, times: ExtrapolationTimes, mu: float, sig: float) -> NDArray[np.float_]:
+    def compute_sf(self, times: ExtrapolationTimes, mu: float, sig: float) -> NpNDArrayFp64:
         ...
 
     # # Return sum of dividing and destiny cells in each generation
@@ -52,7 +52,7 @@ class Cyton2Model:
         mDD: float, sDD: float,
         mDie: float, sDie: float,
         b: float, DTYPE_t: float
-    ) -> NDArray[np.float_]:
+    ) -> NpNDArrayFp64:
         ...
 
     def extrapolate(
