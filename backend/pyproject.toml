@@ -15,7 +15,8 @@ dependencies = [
     'Cython ~= 3.0.8',
     'lmfit ~= 1.2.2',
     'tqdm ~= 4.66.1',
-    'pandas ~= 2.1.3'
+    'pandas ~= 2.1.3',
+    "pydantic_numpy ~= 4.0.0"
 ]
 
 [project.optional-dependencies]

@@ -1,6 +1,5 @@
 from typing import TypedDict, Sequence
-from numpy.typing import NDArray
-import numpy as np
+from pydantic_numpy.typing import Np1DArrayFp64, Np2DArrayFp64
 
 class Parameters(TypedDict):
     """
@@ -103,33 +102,33 @@ type CellTotalSem = float
 "Standard error of the mean"
 
 class ExtrapolatedData(TypedDict):
-    ext_total_live_cells: NDArray[np.float64]
+    ext_total_live_cells: Np1DArrayFp64
     "Extrapolated number of total live cells. Indexed by extrapolated timepoint."
-    ext_cells_per_gen: NDArray[np.float64]
+    ext_cells_per_gen: Np2DArrayFp64
     "Extrapolated number of total live cells. Indexed by generation then extrapolated timepoint."
-    hts_total_live_cells: NDArray[np.float64]
+    hts_total_live_cells: Np1DArrayFp64
     "Extrapolated number of total live cells at the experimental timepoint. Indexed by experimental timepoint."
     hts_cells_per_gen: PerGen[PerTime[float]]
     "Extrapolated number of total live cells. Indexed by generation then experimental timepoint."
 
 # Extrapolation
 type ExtrapolationParams = tuple[PerCond[HarvestTime], PerCond[PerTime[PerRep[PerGen[CellCount]]]], PerCond[MaxGeneration]]
-type ExtrapolationTimes = NDArray[np.float_]
+type ExtrapolationTimes = Np1DArrayFp64
 class ExtrapolatedTimeResults(TypedDict):
-    total_live_cells: NDArray[np.float64]
-    "Cell numbers per timepoint, summed over all generations. 1d array."
-    cells_gen: NDArray[np.float64]
-    "2D array of cell numbers indexed by generation (first axis) and timepoint (second axis)."
-    nUNS: NDArray[np.float64]
-    "Unused 1D array. Predicted number of unstimulated cells that don't divide, indexed by timepoint."
-    nDIV: NDArray[np.float64]
-    "2D array. Predicted number of dividing cells, indexed by generation (first axis) then timepoint (second axis)."
-    nDES: NDArray[np.float64]
-    "2D array. Predicted number of destiny cells, indexed by generation (first axis) then timepoint (second axis)."
+    total_live_cells: Np1DArrayFp64
+    "Cell numbers per timepoint, summed over all generations."
+    cells_gen: Np2DArrayFp64
+    "Cell numbers indexed by generation (first axis) and timepoint (second axis)."
+    nUNS: Np1DArrayFp64
+    "Unused. Predicted number of unstimulated cells that don't divide, indexed by timepoint."
+    nDIV: Np2DArrayFp64
+    "Predicted number of dividing cells, indexed by generation (first axis) then timepoint (second axis)."
+    nDES: Np2DArrayFp64
+    "Predicted number of destiny cells, indexed by generation (first axis) then timepoint (second axis)."
 
 class HarvestTimeResults(TypedDict):
-    total_live_cells: NDArray[np.float64]
-    "Cell numbers per timepoint, summed over all generations. 1d array."
+    total_live_cells: Np1DArrayFp64
+    "Cell numbers per timepoint, summed over all generations."
     cells_gen: PerGen[PerTime[float]]
     "2D array of cell numbers indexed by generation (first axis) and timepoint (second axis)."
 
