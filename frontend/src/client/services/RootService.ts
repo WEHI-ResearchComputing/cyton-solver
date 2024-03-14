@@ -5,6 +5,11 @@
 import type { Body_extrapolate_extrapolate_post } from '../models/Body_extrapolate_extrapolate_post';
 import type { Body_start_fit_start_fit_post } from '../models/Body_start_fit_start_fit_post';
 import type { Body_upload_upload_post } from '../models/Body_upload_upload_post';
+import type { ExperimentData_Output } from '../models/ExperimentData_Output';
+import type { ExperimentSettings_Output } from '../models/ExperimentSettings_Output';
+import type { ExtrapolationResults } from '../models/ExtrapolationResults';
+import type { Parameters } from '../models/Parameters';
+import type { TaskId } from '../models/TaskId';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -21,10 +26,10 @@ export class RootService {
      *
      * Returns:
      * - dict: A dictionary containing the default settings.
-     * @returns any Successful Response
+     * @returns ExperimentSettings_Output Successful Response
      * @throws ApiError
      */
-    public static defaultSettingsDefaultSettingsGet(): CancelablePromise<any> {
+    public static defaultSettingsDefaultSettingsGet(): CancelablePromise<ExperimentSettings_Output> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/default_settings',
@@ -41,14 +46,14 @@ export class RootService {
      *
      * Returns:
      * - dict: A dictionary containing the experiment data parsed from the uploaded file.
-     * @returns any Successful Response
+     * @returns ExperimentData_Output Successful Response
      * @throws ApiError
      */
     public static uploadUploadPost({
         formData,
     }: {
         formData: Body_upload_upload_post,
-    }): CancelablePromise<any> {
+    }): CancelablePromise<ExperimentData_Output> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/upload',
@@ -72,17 +77,22 @@ export class RootService {
      *
      * Returns:
      * - dict: A dictionary containing the extrapolated data.
-     * @returns any Successful Response
+     * @returns ExtrapolationResults Successful Response
      * @throws ApiError
      */
     public static extrapolateExtrapolatePost({
         requestBody,
+        condition,
     }: {
         requestBody: Body_extrapolate_extrapolate_post,
-    }): CancelablePromise<any> {
+        condition?: (string | null),
+    }): CancelablePromise<ExtrapolationResults> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/extrapolate',
+            query: {
+                'condition': condition,
+            },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -107,13 +117,18 @@ export class RootService {
      * @throws ApiError
      */
     public static startFitStartFitPost({
+        condition,
         requestBody,
     }: {
+        condition: string,
         requestBody: Body_start_fit_start_fit_post,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/start_fit',
+            query: {
+                'condition': condition,
+            },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -133,19 +148,20 @@ export class RootService {
      *
      * Returns:
      * - dict: A dictionary containing the fitted parameters.
-     * @returns any Successful Response
+     * @returns Parameters Successful Response
      * @throws ApiError
      */
     public static checkStatusCheckStatusPost({
-        requestBody,
+        taskId,
     }: {
-        requestBody: Record<string, any>,
-    }): CancelablePromise<any> {
+        taskId: TaskId,
+    }): CancelablePromise<Parameters> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/check_status',
-            body: requestBody,
-            mediaType: 'application/json',
+            query: {
+                'task_id': taskId,
+            },
             errors: {
                 422: `Validation Error`,
             },
