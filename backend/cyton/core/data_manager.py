@@ -4,17 +4,20 @@ Last Edit: 11-Feb-2024
 Reshape an input data format to a 4D array (icnd, itpt, igen, irep)
 """
 from scipy.stats import sem
-from core.utils import remove_empty
+from cyton.core.utils import remove_empty
+from cyton.core.types import *
 
-def compute_total_cells(data, conditions, num_tps, gen_per_condition):
+def compute_total_cells(data: PerCond[PerTime[PerRep[PerGen[CellCount | None]]]], conditions: Conditions, num_tps: NumTimePoints, gen_per_condition: PerCond[MaxGeneration]) -> tuple[
+	PerCond[PerTime[CellTotal]], PerCond[Reps[CellTotal]], PerCond[PerTime[CellTotalSem]]
+]:
 	"""
 	All parameters are output of file_reader.py object, which consists meta information about the data itself.
 
-	:param data: (nested list) number of cells per generation (4-dimensional array) = data[icnd][itpt][irep][igen]
-	:param conditions: (list) names of condition
-	:param num_tps: (list) number of time points per condition
-	:param gen_per_condition: (list) number of maximum generations per condition
-	:return: (tuple) [average total cells, total cells with replicates, standard error of means]
+	:param data: number of cells per generation (4-dimensional array) = data[icnd][itpt][irep][igen]
+	:param conditions: names of condition
+	:param num_tps: number of time points per condition
+	:param gen_per_condition: number of maximum generations per condition
+	:return: [average total cells, total cells with replicates, standard error of means]
 	"""
 	
 	num_conditions = len(conditions)
@@ -50,11 +53,13 @@ def compute_total_cells(data, conditions, num_tps, gen_per_condition):
 	total_cells_reps2 = [[[] for _ in range(max(num_tps))] for _ in range(num_conditions)]
 	for icnd in range(num_conditions):
 		for itpt in range(num_tps[icnd]):
-			tmp = [0 for _ in range(max_length)]
+			tmp = [0. for _ in range(max_length)]
 			for igen in range(gen_per_condition[icnd]+1):
 				for irep, datum in enumerate(data[icnd][itpt][igen]):
+					if not isinstance(datum, (int, float)):
+						raise Exception(f"Unknown data {datum} in condition {icnd}, timepoint {itpt} and generation {igen}")
 					tmp[irep] += datum
-			for idx in range(len(data[icnd][itpt][igen])):
+			for idx in range(len(data[icnd][itpt][gen_per_condition[icnd]])):
 				total_cells_reps[icnd].append(tmp[idx])
 				total_cells_reps2[icnd][itpt].append(tmp[idx])
 	filtered_total_cells_reps = remove_empty(total_cells_reps)
@@ -69,7 +74,9 @@ def compute_total_cells(data, conditions, num_tps, gen_per_condition):
 
 	return filtered_total_cells, filtered_total_cells_reps, filtered_total_cells_sem
 
-def sort_cell_generations(data, conditions, num_tps, gen_per_condition):
+def sort_cell_generations(data: PerCond[PerTime[PerRep[PerGen[CellCount | None]]]], conditions: Conditions, num_tps: NumTimePoints, gen_per_condition: PerCond[MaxGeneration]) -> tuple[
+	PerCond[PerTime[PerGen[CellAverage]]], PerCond[PerTime[PerRep[PerGen[CellCount]]]], PerCond[PerTime[PerGen[CellTotalSem]]]
+]:
 	"""
 	This function organises cell-generation profile.
 
@@ -113,7 +120,7 @@ def sort_cell_generations(data, conditions, num_tps, gen_per_condition):
 			for igen in range(gen_per_condition[icnd]+1):
 				for irep, datum in enumerate(data[icnd][itpt][igen]):
 					tmp[irep].append(datum)
-			for idx in range(len(data[icnd][itpt][igen])):
+			for idx in range(len(data[icnd][itpt][gen_per_condition[icnd]])):
 				cell_gens_reps[icnd][itpt].append(tmp[idx])
 
 	filtered_cell_gens_reps = remove_empty(cell_gens_reps)
