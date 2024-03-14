@@ -3,10 +3,11 @@ from cyton.core.settings import DT
 from cyton.core.utils import flatten
 from cyton.core.extrapolate import get_times
 from cyton.core.model_fitting import fit
-from cyton.core.types import *
+from cyton.core.types import ExcludedParameters, Parameters, Bounds, FittableParams, PerTime, Reps, MaxGeneration, HarvestTime, CellTotal, CellAverage, PerGen, CellTotalSem, PerRep, ExtrapolationTimes, PerCond, CellCount, HarvestTimeResults, ExtrapolatedTimeResults, NReps, Conditions
 from cyton.core.model import Cyton2Model
 from pydantic import BaseModel
 import lmfit as lmf
+import numpy as np
 
 class ExperimentSettings(BaseModel):
     """
@@ -143,3 +144,9 @@ class ExperimentData(BaseModel):
             raise Exception(f"Unknown condition {condition}. Known conditions are: {self.conditions}")
 
         return self.slice_condition_idx(condition_index)
+
+class ExtrapolationResults(BaseModel, arbitrary_types_allowed=True):
+    ext: ExtrapolatedTimeResults
+    "Predicted data for extrapolated timepoints"
+    hts: HarvestTimeResults
+    "Predicted data for experimental harvested timepoints"

@@ -133,12 +133,6 @@ class HarvestTimeResults(TypedDict):
     cells_gen: PerGen[PerTime[float]]
     "2D array of cell numbers indexed by generation (first axis) and timepoint (second axis)."
 
-class ExtrapolationResults(TypedDict):
-    ext: ExtrapolatedTimeResults
-    "Predicted data for extrapolated timepoints"
-    hts: HarvestTimeResults
-    "Predicted data for experimental harvested timepoints"
-
 # Fitting
 type ExcludedParameters = list[str]
 class LmFitKwargs(TypedDict):

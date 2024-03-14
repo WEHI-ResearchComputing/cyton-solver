@@ -30,6 +30,11 @@ reportUnknownMemberType = false
 reportMissingTypeStubs = false
 reportUnknownParameterType = false
 reportMissingTypeArgument = false
+reportWildcardImportFromLibrary = false
+exclude = [
+    # Ignore the compiled cython
+    "build"
+]
 
 [tool.pytest.ini_options]
 testpaths = [
