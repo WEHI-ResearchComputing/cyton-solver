@@ -14,4 +14,3 @@ export type ExtrapolatedTimeResults = {
     nDIV: np_ndarray;
     nDES: np_ndarray;
 };
-
