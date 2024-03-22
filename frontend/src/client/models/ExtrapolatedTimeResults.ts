@@ -15,5 +15,6 @@ export type ExtrapolatedTimeResults = {
     nUNS: np_ndarray;
     nDIV: np_ndarray;
     nDES: np_ndarray;
+    densities: Record<string, np_ndarray>;
 };
 

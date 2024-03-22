@@ -129,7 +129,7 @@ class ExtrapolatedTimeResults(TypedDict):
     "Predicted number of dividing cells, indexed by generation (first axis) then timepoint (second axis)."
     nDES: Np2DArrayFp64
     "Predicted number of destiny cells, indexed by generation (first axis) then timepoint (second axis)."
-    densities: dict[Literal["uns", "div", "des", "die"], Np1DArrayFp64]
+    densities: dict[Literal["uns", "div0", "die", "dd"], Np1DArrayFp64]
     "Densities for the extrapolation times. Each key is a random variable and each value is an array indexed by timepoint."
 
 class HarvestTimeResults(TypedDict):

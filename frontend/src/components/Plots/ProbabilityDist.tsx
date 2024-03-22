@@ -4,11 +4,17 @@ import { ExtrapolationResults } from "../../client"
 import type { Data, PlotData } from "plotly.js";
 
 export function ProbabilityDist({ extrapolationData }: { extrapolationData: ExtrapolationResults }) {
+  if (typeof extrapolationData == "undefined")
+    return
 
   return (
     <div className="Plot">
       <Plot
-        data={[]}
+        data={Object.entries(extrapolationData.ext.densities).map(([rv, densities]) : Partial<PlotData> => ({
+          name: `${rv} Density`,
+          x: extrapolationData.ext.time_points,
+          y: densities.data
+        }))}
         layout={{
           title: "Probability Distribution",
           xaxis: {

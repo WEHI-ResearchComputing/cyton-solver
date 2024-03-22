@@ -221,14 +221,14 @@ class Cyton2Model:
 				'nDES': nDES,
 				'densities': {
 					'uns': self.compute_pdf(model_times, mUns, sUns),
-					'div': self.compute_pdf(model_times, mDiv0, sDiv0),
+					'div0': self.compute_pdf(model_times, mDiv0, sDiv0),
 					'die': self.compute_pdf(model_times, mDie, sDie),
 					'dd': self.compute_pdf(model_times, mDD, sDD)
 				}
 			},
 			# Collect cell numbers at harvested time points
 			'hts': { 
-				'havest_times': self.ht,
+				'harvest_times': self.ht,
 				'total_live_cells': total_live_cells_at_ht,
 				'cells_gen': cells_gen_at_ht
 			}

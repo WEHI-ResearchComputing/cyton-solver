@@ -18,7 +18,7 @@ import FitButton from '../Buttons/FitButton';
 import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
 import {EvolutionLive} from '../Plots/EvolutionLive';
-import TestPlot2 from '../Plots/TestPlot2';
+import {ProbabilityDist} from '../Plots/ProbabilityDist';
 import {CytonClient, ExperimentSettings_Output, Parameters} from "../../client"
 import { useAsync } from 'react-async-hook';
 import ParameterForm from "../Form/Parameters"
@@ -30,15 +30,24 @@ function NavigationBar() {
   const client = new CytonClient({
     BASE: "http://localhost:9999"
   });
-  const defaults = useAsync(client.root.defaultSettingsDefaultSettingsGet, []);
   const theme = useTheme();
   // const [defaults, setDefaults] = useState<ExperimentSettings_Output | undefined>(undefined);
   const methods = useForm<Parameters>({
-    defaultValues: async () => (await defaults.currentPromise).parameters ,
+    defaultValues: null,
     mode: "onChange",
   })
+  const defaults = useAsync(async () => {
+    const ret = await client.root.defaultSettingsDefaultSettingsGet();
+    // Update the form default values
+    methods.reset(ret.parameters);
+    return ret;
+  }, []);
   const formData = methods.watch();
-  const extrapolated = useAsync(async (parameters) =>{
+  const extrapolated = useAsync(async (parameters: string) =>{
+    // Don't extrapolate until we have parameters
+    if (!formData.b){
+      return;
+    }
     return client.root.extrapolateExtrapolatePost({
       requestBody: {
         parameters: formData
@@ -114,6 +123,7 @@ function NavigationBar() {
         <DrawerHeader />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
           <EvolutionLive extrapolationData={extrapolated.result}/>
+          <ProbabilityDist extrapolationData={extrapolated.result}/>
           {/* {JSON.stringify(extrapolated, null, 4)} */}
           {/* <TestPlot />
           <TestPlot />
