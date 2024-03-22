@@ -212,6 +212,7 @@ class Cyton2Model:
 
 		res = {
 			'ext': {  # Extrapolated cell numbers
+				'time_points': model_times,
 				'total_live_cells': total_live_cells,
 				'cells_gen': cells_gen,
 				'nUNS': nUNS, 'nDIV': nDIV, 'nDES': nDES
