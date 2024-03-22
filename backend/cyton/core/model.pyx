@@ -210,17 +210,26 @@ class Cyton2Model:
 				cells_gen_at_ht[itpt].append(cells_gen[igen, t_idx])
 			total_live_cells_at_ht[itpt] = total_live_cells[t_idx]
 
-		res = {
-			'ext': {  # Extrapolated cell numbers
+		return {
+			# Extrapolated cell numbers
+			'ext': {
 				'time_points': model_times,
 				'total_live_cells': total_live_cells,
 				'cells_gen': cells_gen,
-				'nUNS': nUNS, 'nDIV': nDIV, 'nDES': nDES
+				'nUNS': nUNS,
+				'nDIV': nDIV,
+				'nDES': nDES,
+				'densities': {
+					'uns': self.compute_pdf(model_times, mUns, sUns),
+					'div': self.compute_pdf(model_times, mDiv0, sDiv0),
+					'die': self.compute_pdf(model_times, mDie, sDie),
+					'dd': self.compute_pdf(model_times, mDD, sDD)
+				}
 			},
-			'hts': {  # Collect cell numbers at harvested time points
+			# Collect cell numbers at harvested time points
+			'hts': { 
+				'havest_times': self.ht,
 				'total_live_cells': total_live_cells_at_ht,
 				'cells_gen': cells_gen_at_ht
 			}
 		}
-		
-		return res
