@@ -114,7 +114,10 @@ class ExtrapolatedData(TypedDict):
 # Extrapolation
 type ExtrapolationParams = tuple[PerCond[HarvestTime], PerCond[PerTime[PerRep[PerGen[CellCount]]]], PerCond[MaxGeneration]]
 type ExtrapolationTimes = Np1DArrayFp64
+
 class ExtrapolatedTimeResults(TypedDict):
+    time_points: ExtrapolationTimes
+    "Time points that the model was extrapolated to, in hours"
     total_live_cells: Np1DArrayFp64
     "Cell numbers per timepoint, summed over all generations."
     cells_gen: Np2DArrayFp64
