@@ -1,1 +1,4 @@
-export type np_ndarray = any;
+export type np_ndarray = {
+    data_type: string
+    data: number[] | number[][]
+};

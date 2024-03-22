@@ -17,7 +17,7 @@ import SettingsButton from '../Buttons/SettingsButton';
 import FitButton from '../Buttons/FitButton';
 import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
-import TestPlot from '../Plots/TestPlot';
+import {EvolutionLive} from '../Plots/EvolutionLive';
 import TestPlot2 from '../Plots/TestPlot2';
 import {CytonClient, ExperimentSettings_Output, Parameters} from "../../client"
 import { useAsync } from 'react-async-hook';
@@ -30,10 +30,11 @@ function NavigationBar() {
   const client = new CytonClient({
     BASE: "http://localhost:9999"
   });
+  const defaults = useAsync(client.root.defaultSettingsDefaultSettingsGet, []);
   const theme = useTheme();
   // const [defaults, setDefaults] = useState<ExperimentSettings_Output | undefined>(undefined);
   const methods = useForm<Parameters>({
-    defaultValues: async () => (await client.root.defaultSettingsDefaultSettingsGet()).parameters ,
+    defaultValues: async () => (await defaults.currentPromise).parameters ,
     mode: "onChange",
   })
   const formData = methods.watch();
@@ -112,7 +113,8 @@ function NavigationBar() {
       <Main open={open}>
         <DrawerHeader />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
-          {JSON.stringify(extrapolated, null, 4)}
+          <EvolutionLive extrapolationData={extrapolated.result}/>
+          {/* {JSON.stringify(extrapolated, null, 4)} */}
           {/* <TestPlot />
           <TestPlot />
           <TestPlot />
@@ -121,8 +123,8 @@ function NavigationBar() {
           <TestPlot /> */}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%'}}>
-        <TestPlot2 />
-        <TestPlot2 />
+        {/* <TestPlot2 />
+        <TestPlot2 /> */}
       </div>
       </Main>
     </Box>
