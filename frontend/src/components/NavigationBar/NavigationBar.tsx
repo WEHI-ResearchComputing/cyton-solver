@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Main, AppBar, DrawerHeader } from './Styles';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -18,12 +19,34 @@ import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
 import TestPlot from '../Plots/TestPlot';
 import TestPlot2 from '../Plots/TestPlot2';
+import {CytonClient, ExperimentSettings_Output, Parameters} from "../../client"
+import { useAsync } from 'react-async-hook';
+import ParameterForm from "../Form/Parameters"
+import { FormProvider, useForm } from 'react-hook-form';
 
 const drawerWidth = 240;
 
 function NavigationBar() {
+  const client = new CytonClient({
+    BASE: "http://localhost:9999"
+  });
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  // const [defaults, setDefaults] = useState<ExperimentSettings_Output | undefined>(undefined);
+  const methods = useForm<Parameters>({
+    defaultValues: async () => (await client.root.defaultSettingsDefaultSettingsGet()).parameters ,
+    mode: "onChange",
+  })
+  const formData = methods.watch();
+  const extrapolated = useAsync(async (parameters) =>{
+    return client.root.extrapolateExtrapolatePost({
+      requestBody: {
+        parameters: formData
+      }
+    })
+    // Stringify here prevents excessive re-renders due to a bad comparison
+  }, [JSON.stringify(formData)]);
+  const [open, setOpen] = useState(false);
+  // const [parameters, setParameters] = useState<Parameters>(null);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -33,7 +56,13 @@ function NavigationBar() {
     setOpen(false);
   };
 
+  // useAsync(async () => {
+  //   const defaults = await client.root.defaultSettingsDefaultSettingsGet();
+  //   setDefaults(defaults);
+  // }, []);
+
   return (
+    <FormProvider {...methods}>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
@@ -71,11 +100,7 @@ function NavigationBar() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <InputSlider label="Parameter 1" min={0} max={100} step={10} />
-        <InputSlider label="Parameter 2" min={0} max={200} step={10} />
-        <InputSlider label="Parameter 3" min={0} max={300} step={10} />
-        <InputSlider label="Parameter 4" min={0} max={400} step={10} />
-        <InputSlider label="Parameter 5" min={0} max={500} step={10} />
+        <ParameterForm/>
         <Box sx={{ marginTop: 'auto' }}>
           <Divider />
           <UploadButton />
@@ -87,12 +112,13 @@ function NavigationBar() {
       <Main open={open}>
         <DrawerHeader />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
+          {JSON.stringify(extrapolated, null, 4)}
+          {/* <TestPlot />
           <TestPlot />
           <TestPlot />
           <TestPlot />
           <TestPlot />
-          <TestPlot />
-          <TestPlot />
+          <TestPlot /> */}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%'}}>
         <TestPlot2 />
@@ -100,6 +126,7 @@ function NavigationBar() {
       </div>
       </Main>
     </Box>
+    </FormProvider>
   );
 }
 export default NavigationBar;

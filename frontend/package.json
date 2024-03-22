@@ -9,7 +9,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write ./src",
-    "generate-client": "openapi --input http://127.0.0.1:9999/openapi.json --output ./src/client --client axios --useOptions --useUnionTypes"
+    "type-check": "tsc --noEmit",
+    "generate-client": "openapi --input http://127.0.0.1:9999/openapi.json --output ./src/client --client axios --useOptions --useUnionTypes --name CytonClient"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -21,7 +22,10 @@
     "jstat": "^1.9.6",
     "plotly.js": "^2.28.0",
     "react": "^18.2.0",
+    "react-async-hook": "^4.0.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.0",
+    "react-hook-form-mui": "^7.0.0-beta.0",
     "react-plotly.js": "^2.6.0",
     "tinycolor2": "^1.4.2"
   },

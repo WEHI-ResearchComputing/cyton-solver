@@ -16,7 +16,7 @@ cimport cython
 @cython.nonecheck(True)
 @cython.cdivision(True)
 class Cyton2Model:
-	def __init__(self, ht, n0, max_div, dt, nreps, logn=True):
+	def __init__(self, ht, n0, max_div, dt, nreps = [], logn=True):
 		self.t0 = <DTYPE_t>(0.0)
 		self.tf = <DTYPE_t>(max(ht) + dt)
 		self.dt = <DTYPE_t>(dt)  									# time increment

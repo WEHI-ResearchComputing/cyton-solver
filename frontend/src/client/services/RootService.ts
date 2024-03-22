@@ -12,10 +12,11 @@ import type { Parameters } from '../models/Parameters';
 import type { TaskId } from '../models/TaskId';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
 export class RootService {
+
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * Default Settings
@@ -29,8 +30,8 @@ export class RootService {
      * @returns ExperimentSettings_Output Successful Response
      * @throws ApiError
      */
-    public static defaultSettingsDefaultSettingsGet(): CancelablePromise<ExperimentSettings_Output> {
-        return __request(OpenAPI, {
+    public defaultSettingsDefaultSettingsGet(): CancelablePromise<ExperimentSettings_Output> {
+        return this.httpRequest.request({
             method: 'GET',
             url: '/default_settings',
         });
@@ -49,12 +50,12 @@ export class RootService {
      * @returns ExperimentData_Output Successful Response
      * @throws ApiError
      */
-    public static uploadUploadPost({
+    public uploadUploadPost({
         formData,
     }: {
         formData: Body_upload_upload_post,
     }): CancelablePromise<ExperimentData_Output> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/upload',
             formData: formData,
@@ -80,14 +81,14 @@ export class RootService {
      * @returns ExtrapolationResults Successful Response
      * @throws ApiError
      */
-    public static extrapolateExtrapolatePost({
+    public extrapolateExtrapolatePost({
         requestBody,
         condition,
     }: {
         requestBody: Body_extrapolate_extrapolate_post,
         condition?: (string | null),
     }): CancelablePromise<ExtrapolationResults> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/extrapolate',
             query: {
@@ -116,14 +117,14 @@ export class RootService {
      * @returns any Successful Response
      * @throws ApiError
      */
-    public static startFitStartFitPost({
+    public startFitStartFitPost({
         condition,
         requestBody,
     }: {
         condition: string,
         requestBody: Body_start_fit_start_fit_post,
     }): CancelablePromise<any> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/start_fit',
             query: {
@@ -151,12 +152,12 @@ export class RootService {
      * @returns Parameters Successful Response
      * @throws ApiError
      */
-    public static checkStatusCheckStatusPost({
+    public checkStatusCheckStatusPost({
         taskId,
     }: {
         taskId: TaskId,
     }): CancelablePromise<Parameters> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/check_status',
             query: {
