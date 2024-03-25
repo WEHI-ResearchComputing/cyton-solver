@@ -1,23 +1,27 @@
 import * as React from "react";
 import Plot from 'react-plotly.js';
 import { ExtrapolationResults } from "../../client"
-import type { Data, PlotData } from "plotly.js";
 
-export function CellsVsGens({ extrapolationData }: { extrapolationData: ExtrapolationResults }) {
-
+export function CellsVsGens({ extrapolationData, timepoint }: { extrapolationData: ExtrapolationResults, timepoint: number }) {
   return (
     <div className="Plot">
       <Plot
-        data={extrapolationData.}
+        data = {[
+          {
+            y: extrapolationData.hts.cells_gen.map(genData => genData[timepoint]),
+            mode: "lines+markers",
+            type: "scatter"
+          }
+        ]}
         layout={{
-          title: "Probability Distribution",
+          title: `Live Cells vs Generations at HT ${timepoint + 1}`,
           xaxis: {
-            title: "Time (hours)",
+            title: "Generation Number",
           },
           yaxis: {
-            title: "Density",
+            title: "Number of Cells",
           },
-          autosize: true,  // Allow the chart to be responsive
+          autosize: true,
         }}
         style={{ width: '100%', height: '100%' }}
       />

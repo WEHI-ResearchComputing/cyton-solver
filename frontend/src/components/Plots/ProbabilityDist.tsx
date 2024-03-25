@@ -1,12 +1,9 @@
 import * as React from "react";
 import Plot from 'react-plotly.js';
 import { ExtrapolationResults } from "../../client"
-import type { Data, PlotData } from "plotly.js";
+import type { PlotData } from "plotly.js";
 
 export function ProbabilityDist({ extrapolationData }: { extrapolationData: ExtrapolationResults }) {
-  if (typeof extrapolationData == "undefined")
-    return
-
   return (
     <div className="Plot">
       <Plot

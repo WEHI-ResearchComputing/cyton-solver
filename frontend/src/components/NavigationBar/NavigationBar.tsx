@@ -12,14 +12,14 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import InputSlider from '../Slider/Slider';
 import SettingsButton from '../Buttons/SettingsButton';
 import FitButton from '../Buttons/FitButton';
 import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
 import {EvolutionLive} from '../Plots/EvolutionLive';
 import {ProbabilityDist} from '../Plots/ProbabilityDist';
-import {CytonClient, ExperimentSettings_Output, Parameters} from "../../client"
+import {CellsVsGens} from '../Plots/CellsVsGens';
+import {CytonClient, Parameters} from "../../client"
 import { useAsync } from 'react-async-hook';
 import ParameterForm from "../Form/Parameters"
 import { FormProvider, useForm } from 'react-hook-form';
@@ -66,10 +66,21 @@ function NavigationBar() {
     setOpen(false);
   };
 
-  // useAsync(async () => {
-  //   const defaults = await client.root.defaultSettingsDefaultSettingsGet();
-  //   setDefaults(defaults);
-  // }, []);
+  let plots: React.JSX.Element[];
+  let cvgPlots: React.JSX.Element[];
+  if (typeof extrapolated.result != "undefined"){
+    cvgPlots = extrapolated.result.hts.cells_gen[0].map((_, timepoint) =>
+      <CellsVsGens extrapolationData={extrapolated.result} timepoint={timepoint}/>
+    )
+    plots = [
+      <EvolutionLive extrapolationData={extrapolated.result}/>,
+      <ProbabilityDist extrapolationData={extrapolated.result}/>
+    ]
+  }
+  else {
+    cvgPlots =  [];
+    plots = [];
+  }
 
   return (
     <FormProvider {...methods}>
@@ -122,20 +133,11 @@ function NavigationBar() {
       <Main open={open}>
         <DrawerHeader />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
-          <EvolutionLive extrapolationData={extrapolated.result}/>
-          <ProbabilityDist extrapolationData={extrapolated.result}/>
-          {/* {JSON.stringify(extrapolated, null, 4)} */}
-          {/* <TestPlot />
-          <TestPlot />
-          <TestPlot />
-          <TestPlot />
-          <TestPlot />
-          <TestPlot /> */}
+          {cvgPlots}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%'}}>
-        {/* <TestPlot2 />
-        <TestPlot2 /> */}
-      </div>
+          {plots}
+        </div>
       </Main>
     </Box>
     </FormProvider>

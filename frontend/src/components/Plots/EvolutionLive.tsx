@@ -7,10 +7,6 @@ import type { Data, PlotData } from "plotly.js";
  * The "Evolution of Live Cells" plot 
  */
 export function EvolutionLive({ extrapolationData }: { extrapolationData: ExtrapolationResults }) {
-  if (typeof extrapolationData == "undefined") {
-    return;
-  }
-
   const generationPlots = extrapolationData.ext.cells_gen.data.map((data: any, generation: number): Partial<PlotData> => (
     {
       x: extrapolationData.ext.time_points.data,
@@ -49,7 +45,7 @@ export function EvolutionLive({ extrapolationData }: { extrapolationData: Extrap
           yaxis: {
             title: "Cell Number",
           },
-          autosize: true,  // Allow the chart to be responsive
+          autosize: true,
         }}
         style={{ width: '100%', height: '100%' }}
       />
