@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Main, AppBar, DrawerHeader } from './Styles';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -11,19 +12,50 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import InputSlider from '../Slider/Slider';
 import SettingsButton from '../Buttons/SettingsButton';
 import FitButton from '../Buttons/FitButton';
 import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
-import TestPlot from '../Plots/TestPlot';
-import TestPlot2 from '../Plots/TestPlot2';
+import {EvolutionLive} from '../Plots/EvolutionLive';
+import {ProbabilityDist} from '../Plots/ProbabilityDist';
+import {CellsVsGens} from '../Plots/CellsVsGens';
+import {CytonClient, Parameters} from "../../client"
+import { useAsync } from 'react-async-hook';
+import ParameterForm from "../Form/Parameters"
+import { FormProvider, useForm } from 'react-hook-form';
 
 const drawerWidth = 240;
 
 function NavigationBar() {
+  const client = new CytonClient({
+    BASE: "http://localhost:9999"
+  });
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const methods = useForm<Parameters>({
+    defaultValues: null,
+    mode: "onChange",
+  })
+  const defaults = useAsync(async () => {
+    const ret = await client.root.defaultSettingsDefaultSettingsGet();
+    // Update the form default values
+    methods.reset(ret.parameters);
+    return ret;
+  }, []);
+  const formData = methods.watch();
+  const extrapolated = useAsync(async (parameters: string) =>{
+    // Don't extrapolate until we have parameters
+    if (!formData.b){
+      return;
+    }
+    return client.root.extrapolateExtrapolatePost({
+      requestBody: {
+        parameters: formData
+      }
+    })
+    // Stringify here prevents excessive re-renders due to a bad comparison
+  }, [JSON.stringify(formData)]);
+  const [open, setOpen] = useState(false);
+  // const [parameters, setParameters] = useState<Parameters>(null);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -33,7 +65,24 @@ function NavigationBar() {
     setOpen(false);
   };
 
+  let plots: React.JSX.Element[];
+  let cvgPlots: React.JSX.Element[];
+  if (typeof extrapolated.result != "undefined"){
+    cvgPlots = extrapolated.result.hts.cells_gen[0].map((_, timepoint) =>
+      <CellsVsGens extrapolationData={extrapolated.result} timepoint={timepoint}/>
+    )
+    plots = [
+      <EvolutionLive extrapolationData={extrapolated.result}/>,
+      <ProbabilityDist extrapolationData={extrapolated.result}/>
+    ]
+  }
+  else {
+    cvgPlots =  [];
+    plots = [];
+  }
+
   return (
+    <FormProvider {...methods}>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
@@ -71,11 +120,7 @@ function NavigationBar() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <InputSlider label="Parameter 1" min={0} max={100} step={10} />
-        <InputSlider label="Parameter 2" min={0} max={200} step={10} />
-        <InputSlider label="Parameter 3" min={0} max={300} step={10} />
-        <InputSlider label="Parameter 4" min={0} max={400} step={10} />
-        <InputSlider label="Parameter 5" min={0} max={500} step={10} />
+        <ParameterForm/>
         <Box sx={{ marginTop: 'auto' }}>
           <Divider />
           <UploadButton />
@@ -87,19 +132,14 @@ function NavigationBar() {
       <Main open={open}>
         <DrawerHeader />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
-          <TestPlot />
-          <TestPlot />
-          <TestPlot />
-          <TestPlot />
-          <TestPlot />
-          <TestPlot />
+          {cvgPlots}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%'}}>
-        <TestPlot2 />
-        <TestPlot2 />
-      </div>
+          {plots}
+        </div>
       </Main>
     </Box>
+    </FormProvider>
   );
 }
 export default NavigationBar;

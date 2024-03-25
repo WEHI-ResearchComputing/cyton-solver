@@ -1,4 +1,4 @@
-from typing import TypedDict, Sequence
+from typing import TypedDict, Sequence, Literal
 from pydantic_numpy.typing import Np1DArrayFp64, Np2DArrayFp64
 
 class Parameters(TypedDict):
@@ -102,6 +102,7 @@ type CellTotalSem = float
 "Standard error of the mean"
 
 class ExtrapolatedData(TypedDict):
+    
     ext_total_live_cells: Np1DArrayFp64
     "Extrapolated number of total live cells. Indexed by extrapolated timepoint."
     ext_cells_per_gen: Np2DArrayFp64
@@ -114,7 +115,10 @@ class ExtrapolatedData(TypedDict):
 # Extrapolation
 type ExtrapolationParams = tuple[PerCond[HarvestTime], PerCond[PerTime[PerRep[PerGen[CellCount]]]], PerCond[MaxGeneration]]
 type ExtrapolationTimes = Np1DArrayFp64
+
 class ExtrapolatedTimeResults(TypedDict):
+    time_points: ExtrapolationTimes
+    "Time points that the model was extrapolated to, in hours"
     total_live_cells: Np1DArrayFp64
     "Cell numbers per timepoint, summed over all generations."
     cells_gen: Np2DArrayFp64
@@ -125,8 +129,11 @@ class ExtrapolatedTimeResults(TypedDict):
     "Predicted number of dividing cells, indexed by generation (first axis) then timepoint (second axis)."
     nDES: Np2DArrayFp64
     "Predicted number of destiny cells, indexed by generation (first axis) then timepoint (second axis)."
+    densities: dict[Literal["uns", "div0", "die", "dd"], Np1DArrayFp64]
+    "Densities for the extrapolation times. Each key is a random variable and each value is an array indexed by timepoint."
 
 class HarvestTimeResults(TypedDict):
+    harvest_times: PerTime[HarvestTime]
     total_live_cells: Np1DArrayFp64
     "Cell numbers per timepoint, summed over all generations."
     cells_gen: PerGen[PerTime[float]]

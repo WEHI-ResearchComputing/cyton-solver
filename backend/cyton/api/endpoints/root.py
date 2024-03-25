@@ -104,8 +104,9 @@ async def extrapolate(request: Request, parameters: Parameters, data: Experiment
         else:
             result = extrapolate_without_data(parameters)
 
-    except Exception:
-        raise HTTPException(status_code=400, detail="Failed to extrapolate model. Please try again.")
+    except Exception as e:
+        log.error(e)
+        raise HTTPException(status_code=400, detail=f"Failed to extrapolate model. Received error {e} Please try again.")
 
     log.info("Model extrapolation successful. Returning extrapolated data.")
 

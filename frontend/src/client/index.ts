@@ -2,7 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+export { CytonClient } from './CytonClient';
+
 export { ApiError } from './core/ApiError';
+export { BaseHttpRequest } from './core/BaseHttpRequest';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
@@ -22,6 +25,7 @@ export type { ExperimentSettings_Input } from './models/ExperimentSettings_Input
 export type { ExperimentSettings_Output } from './models/ExperimentSettings_Output';
 export type { ExtrapolatedTimeResults } from './models/ExtrapolatedTimeResults';
 export type { ExtrapolationResults } from './models/ExtrapolationResults';
+export type { ExtrapolationTimes } from './models/ExtrapolationTimes';
 export type { FittableParams } from './models/FittableParams';
 export type { HarvestTime } from './models/HarvestTime';
 export type { HarvestTimeResults } from './models/HarvestTimeResults';
