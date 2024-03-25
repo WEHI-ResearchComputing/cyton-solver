@@ -32,7 +32,7 @@ jobs:
           cache: 'pip'
 
       - name: Install package
-        run: pip install './backend[dev]'
+        run: pip install './backend[dev,server]'
 
       - name: Type checking
         uses: jakebailey/pyright-action@v2.2.1
