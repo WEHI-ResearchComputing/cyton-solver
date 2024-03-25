@@ -24,24 +24,6 @@ function InputSlider( {label}) {
   const value = controller.value || 0;
   const onChange = controller.onChange;
 
-  // const [value, setValue] = React.useState((max + min) / 2);
-
-  // const handleSliderChange = (event, newValue) => {
-  //   setValue(newValue);
-  // };
-
-  // const handleInputChange = (event) => {
-  //   setValue(event.target.value === '' ? 0 : Number(event.target.value));
-  // };
-
-  // const handleBlur = () => {
-  //   if (value < min) {
-  //     setValue(min);
-  //   } else if (value > max) {
-  //     setValue(max);
-  //   }
-  // };
-
   return (
     <Box sx={{ padding: '8px' }}>
       <Typography id="input-slider" gutterBottom>
@@ -52,7 +34,6 @@ function InputSlider( {label}) {
         </Grid>
         <Grid item xs>
           <Slider
-            // value={typeof value === 'number' ? value : 0}
             value={value}
             onChange={onChange}
             aria-labelledby="input-slider"
@@ -66,8 +47,6 @@ function InputSlider( {label}) {
             value={value}
             onChange={onChange}
             size="small"
-            // onChange={handleInputChange}
-            // onBlur={handleBlur}
             inputProps={{
               step: step,
               min: min,
