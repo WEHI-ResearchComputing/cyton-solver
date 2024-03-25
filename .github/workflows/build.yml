@@ -44,8 +44,8 @@ jobs:
         working-directory: ./backend
         run: pytest
 
-      - name: Build 
-        uses: hynek/build-and-inspect-python-package@v2
+      - name: Inspect 
+        uses: hynek/build-and-inspect-python-package@v2.0.2
         with:
           path: ./backend
-          skip-wheel: true
+          skip-wheel: 'true'
