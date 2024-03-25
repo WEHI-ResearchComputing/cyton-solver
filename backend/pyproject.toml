@@ -26,9 +26,6 @@ server = ["uvicorn"]
 [project.scripts]
 cyton-server = "cyton.api.main:main"
 
-[tool.setuptools.package-data]
-"cyton.api" = ["static/**"]
-
 [tool.pyright]
 typeCheckingMode = "strict"
 reportUnnecessaryComparison = false
