@@ -35,7 +35,6 @@ jobs:
           cache: 'pip'
 
       - name: Install package
-        working-directory: ./backend
         run: pip install './backend[dev]'
 
       - name: Type checking
