@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from cyton.api.api import api_router
+from fastapi.responses import RedirectResponse
+from cyton.api.api import router as api_router
+from fastapi.staticfiles import StaticFiles
 
 # Initializes a FastAPI instance
 app = FastAPI()
@@ -14,5 +16,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initializes API Endpoints
-app.include_router(api_router)
+@app.get("/")
+async def index_redirect():
+    return RedirectResponse(url='/index.html')
+
+# Serve the API at /api
+app.include_router(api_router, prefix="/api")
+
+# Serve static files everywhere else
+app.mount("/", StaticFiles(packages=[("cyton.api", "static")], html=True), name="static")

@@ -9,7 +9,7 @@ export function ProbabilityDist({ extrapolationData }: { extrapolationData: Extr
       <Plot
         data={Object.entries(extrapolationData.ext.densities).map(([rv, densities]) : Partial<PlotData> => ({
           name: `${rv} Density`,
-          x: extrapolationData.ext.time_points,
+          x: extrapolationData.ext.time_points.data,
           y: densities.data
         }))}
         layout={{

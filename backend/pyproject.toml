@@ -1,14 +1,14 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm", "Cython", "numpy"]
+requires = ["setuptools", "Cython", "numpy"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "cyton"
 version = "0.0.1"
 requires-python = ">=3.12"
+readme = "README.md"
 dependencies = [
     'fastapi ~= 0.105.0',
-    'uvicorn ~= 0.24.0',
     'python-multipart ~= 0.0.6',
     'openpyxl ~= 3.1.2',
     'scipy ~= 1.11.4',
@@ -21,6 +21,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest"]
+server = ["uvicorn"]
+
+[project.scripts]
+cyton-server = "cyton.api.main:main"
 
 [tool.pyright]
 typeCheckingMode = "strict"

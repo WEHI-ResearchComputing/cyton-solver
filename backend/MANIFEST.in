@@ -1,0 +1,4 @@
+graft cyton/api/static
+graft cyton/api/static
+global-include *.pyx
+prune test

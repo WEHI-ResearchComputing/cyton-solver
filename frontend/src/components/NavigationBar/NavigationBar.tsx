@@ -36,7 +36,7 @@ function NavigationBar() {
     mode: "onChange",
   })
   const defaults = useAsync(async () => {
-    const ret = await client.root.defaultSettingsDefaultSettingsGet();
+    const ret = await client.root.defaultSettingsApiDefaultSettingsGet();
     // Update the form default values
     methods.reset(ret.parameters);
     return ret;
@@ -47,7 +47,7 @@ function NavigationBar() {
     if (!formData.b){
       return;
     }
-    return client.root.extrapolateExtrapolatePost({
+    return client.root.extrapolateApiExtrapolatePost({
       requestBody: {
         parameters: formData
       }

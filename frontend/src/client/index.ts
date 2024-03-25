@@ -10,9 +10,9 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
-export type { Body_extrapolate_extrapolate_post } from './models/Body_extrapolate_extrapolate_post';
-export type { Body_start_fit_start_fit_post } from './models/Body_start_fit_start_fit_post';
-export type { Body_upload_upload_post } from './models/Body_upload_upload_post';
+export type { Body_extrapolate_api_extrapolate_post } from './models/Body_extrapolate_api_extrapolate_post';
+export type { Body_start_fit_api_start_fit_post } from './models/Body_start_fit_api_start_fit_post';
+export type { Body_upload_api_upload_post } from './models/Body_upload_api_upload_post';
 export type { Bounds } from './models/Bounds';
 export type { CellAverage } from './models/CellAverage';
 export type { CellCount } from './models/CellCount';
@@ -71,4 +71,5 @@ export type { Reps_HarvestTime_ } from './models/Reps_HarvestTime_';
 export type { TaskId } from './models/TaskId';
 export type { ValidationError } from './models/ValidationError';
 
+export { DefaultService } from './services/DefaultService';
 export { RootService } from './services/RootService';
