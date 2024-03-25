@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Body_upload_upload_post = {
+export type Body_upload_api_upload_post = {
     file: Blob;
 };
 

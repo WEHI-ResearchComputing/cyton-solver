@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { ExperimentData_Input } from './ExperimentData_Input';
-import type { Parameters } from './Parameters';
+import type { ExperimentSettings_Input } from './ExperimentSettings_Input';
 
-export type Body_extrapolate_extrapolate_post = {
-    parameters: Parameters;
-    data?: (ExperimentData_Input | null);
+export type Body_start_fit_api_start_fit_post = {
+    data: ExperimentData_Input;
+    settings: ExperimentSettings_Input;
 };
 

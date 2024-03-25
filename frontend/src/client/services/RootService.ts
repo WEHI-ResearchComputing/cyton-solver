@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Body_extrapolate_extrapolate_post } from '../models/Body_extrapolate_extrapolate_post';
-import type { Body_start_fit_start_fit_post } from '../models/Body_start_fit_start_fit_post';
-import type { Body_upload_upload_post } from '../models/Body_upload_upload_post';
+import type { Body_extrapolate_api_extrapolate_post } from '../models/Body_extrapolate_api_extrapolate_post';
+import type { Body_start_fit_api_start_fit_post } from '../models/Body_start_fit_api_start_fit_post';
+import type { Body_upload_api_upload_post } from '../models/Body_upload_api_upload_post';
 import type { ExperimentData_Output } from '../models/ExperimentData_Output';
 import type { ExperimentSettings_Output } from '../models/ExperimentSettings_Output';
 import type { ExtrapolationResults } from '../models/ExtrapolationResults';
@@ -30,10 +30,10 @@ export class RootService {
      * @returns ExperimentSettings_Output Successful Response
      * @throws ApiError
      */
-    public defaultSettingsDefaultSettingsGet(): CancelablePromise<ExperimentSettings_Output> {
+    public defaultSettingsApiDefaultSettingsGet(): CancelablePromise<ExperimentSettings_Output> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/default_settings',
+            url: '/api/default_settings',
         });
     }
 
@@ -50,14 +50,14 @@ export class RootService {
      * @returns ExperimentData_Output Successful Response
      * @throws ApiError
      */
-    public uploadUploadPost({
+    public uploadApiUploadPost({
         formData,
     }: {
-        formData: Body_upload_upload_post,
+        formData: Body_upload_api_upload_post,
     }): CancelablePromise<ExperimentData_Output> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/upload',
+            url: '/api/upload',
             formData: formData,
             mediaType: 'multipart/form-data',
             errors: {
@@ -81,16 +81,16 @@ export class RootService {
      * @returns ExtrapolationResults Successful Response
      * @throws ApiError
      */
-    public extrapolateExtrapolatePost({
+    public extrapolateApiExtrapolatePost({
         requestBody,
         condition,
     }: {
-        requestBody: Body_extrapolate_extrapolate_post,
+        requestBody: Body_extrapolate_api_extrapolate_post,
         condition?: (string | null),
     }): CancelablePromise<ExtrapolationResults> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/extrapolate',
+            url: '/api/extrapolate',
             query: {
                 'condition': condition,
             },
@@ -117,16 +117,16 @@ export class RootService {
      * @returns any Successful Response
      * @throws ApiError
      */
-    public startFitStartFitPost({
+    public startFitApiStartFitPost({
         condition,
         requestBody,
     }: {
         condition: string,
-        requestBody: Body_start_fit_start_fit_post,
+        requestBody: Body_start_fit_api_start_fit_post,
     }): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/start_fit',
+            url: '/api/start_fit',
             query: {
                 'condition': condition,
             },
@@ -152,14 +152,14 @@ export class RootService {
      * @returns Parameters Successful Response
      * @throws ApiError
      */
-    public checkStatusCheckStatusPost({
+    public checkStatusApiCheckStatusPost({
         taskId,
     }: {
         taskId: TaskId,
     }): CancelablePromise<Parameters> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/check_status',
+            url: '/api/check_status',
             query: {
                 'task_id': taskId,
             },
