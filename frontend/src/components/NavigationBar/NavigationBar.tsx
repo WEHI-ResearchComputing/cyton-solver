@@ -31,7 +31,6 @@ function NavigationBar() {
     BASE: "http://localhost:9999"
   });
   const theme = useTheme();
-  // const [defaults, setDefaults] = useState<ExperimentSettings_Output | undefined>(undefined);
   const methods = useForm<Parameters>({
     defaultValues: null,
     mode: "onChange",
