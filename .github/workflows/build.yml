@@ -45,7 +45,7 @@ jobs:
         run: pytest
 
       - name: Build sdist
-        run: python -m build ./backend
+        run: python -m build ./backend --sdist
 
       - name: Publish sdist
         uses: actions/upload-artifact@v4
