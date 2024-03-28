@@ -7,14 +7,12 @@ import type { OpenAPIConfig } from './core/OpenAPI';
 import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
 import { DefaultService } from './services/DefaultService';
-import { RootService } from './services/RootService';
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
 export class CytonClient {
 
     public readonly default: DefaultService;
-    public readonly root: RootService;
 
     public readonly request: BaseHttpRequest;
 
@@ -32,7 +30,6 @@ export class CytonClient {
         });
 
         this.default = new DefaultService(this.request);
-        this.root = new RootService(this.request);
     }
 }
 

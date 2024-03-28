@@ -20,13 +20,13 @@ const UploadButton = ({ client, onUpload }: { client: CytonClient, onUpload: (da
 
     if (selectedFile) {
       try {
-        const response = await client.root.uploadApiUploadPost({
+        const response = await client.default.uploadApiUploadPost({
           formData: {
             file: selectedFile
           }
         });
-        enqueueSnackbar("File processed successfully", {
-          variant: "success"
+        enqueueSnackbar("File processed successfully. Click \"Fit\" to estimate parameters.", {
+          variant: "success",
         });
         onUpload(response);
       } catch (error) {

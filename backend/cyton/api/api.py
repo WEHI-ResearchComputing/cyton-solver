@@ -8,7 +8,7 @@ from cyton.api.support.upload import parse_file
 from cyton.api.support.background_fit import start_background_fit
 from cyton.api.support.default_settings import get_default_settings
 from cyton.api.support.check_status import get_fitted_parameters
-from cyton.api.types import TaskId
+from cyton.api.types import FitResult, TaskId
 from cyton.core.models import ExperimentSettings, ExperimentData, ExtrapolationResults
 from cyton.core.extrapolate import extrapolate_without_data
 from shutil import copyfileobj
@@ -59,7 +59,7 @@ async def upload(request: Request, file: UploadFile = File(...)) -> ExperimentDa
     log.info(f"/upload was accessed from: {request.client}")
 
     if file.filename is None or Path(file.filename).suffix != ".xlsx":
-        raise HTTPException(status_code=400, detail="The uploaded file should have the file extension .xlsx")
+        raise HTTPException(status_code=400, detail="Failed to upload file. Please try again.")
 
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
@@ -116,7 +116,7 @@ async def extrapolate(request: Request, parameters: Parameters, data: Experiment
 # Start Fit Endpoint
 # =======================
 @router.post('/start_fit')
-async def start_fit(request: Request, data: ExperimentData, settings: ExperimentSettings, condition: str, background_tasks: BackgroundTasks):
+async def start_fit(request: Request, data: ExperimentData, settings: ExperimentSettings, condition: str, background_tasks: BackgroundTasks) -> FitResult:
     """
     Initiates a background fitting job and returns a taskID to the client.
 
@@ -153,7 +153,7 @@ async def start_fit(request: Request, data: ExperimentData, settings: Experiment
 # Check Status Endpoint
 # =======================
 @router.post('/check_status')
-async def check_status(request: Request, task_id: TaskId) -> Parameters:
+async def check_status(request: Request, task_id: TaskId) -> Parameters | None:
         """
         Checks the status of a fitting job and returns the fitted parameters if completed.
         Else, returns None.
@@ -170,10 +170,11 @@ async def check_status(request: Request, task_id: TaskId) -> Parameters:
         try:
             # Returns None if the task is not completed
             fitted_parameters = get_fitted_parameters(task_id)
+
+            log.info(f"Status checked successfully for task ID: {task_id}")
+
+            return fitted_parameters
     
         except Exception:
             raise HTTPException(status_code=400, detail="Failed to check status. Please try again.")
     
-        log.info(f"Status checked successfully for task ID: {task_id}")
-    
-        return fitted_parameters
