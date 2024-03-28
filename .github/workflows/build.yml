@@ -44,8 +44,11 @@ jobs:
         working-directory: ./backend
         run: pytest
 
-      - name: Inspect 
-        uses: hynek/build-and-inspect-python-package@v2.0.2
+      - name: Build sdist
+        run: python -m build ./backend --sdist
+
+      - name: Publish sdist
+        uses: actions/upload-artifact@v4
         with:
-          path: ./backend
-          skip-wheel: 'true'
+          name: sdist
+          path: 'backend/dist/*'

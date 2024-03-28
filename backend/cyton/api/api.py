@@ -170,11 +170,10 @@ async def check_status(request: Request, task_id: TaskId) -> Parameters | None:
         try:
             # Returns None if the task is not completed
             fitted_parameters = get_fitted_parameters(task_id)
-
-            log.info(f"Status checked successfully for task ID: {task_id}")
-
-            return fitted_parameters
     
         except Exception:
             raise HTTPException(status_code=400, detail="Failed to check status. Please try again.")
     
+        log.info(f"Status checked successfully for task ID: {task_id}")
+    
+        return fitted_parameters
