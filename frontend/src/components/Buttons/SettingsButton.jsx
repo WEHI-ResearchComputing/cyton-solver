@@ -13,19 +13,17 @@ const SettingsButton = () => {
   const handleModalClose = () => {
     setOpenModal(false);
   };
-    return (
-        <><List>
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleButtonClick}>
-            <ListItemIcon style={{ minWidth: '40px' }}>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-      <SettingsDialog open={openModal} onClose={handleModalClose} /></>   
-    )
+  return (
+    <ListItem disablePadding>
+      <ListItemButton onClick={handleButtonClick}>
+        <ListItemIcon style={{ minWidth: '40px' }}>
+          <SettingsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Settings" />
+      </ListItemButton>
+      <SettingsDialog open={openModal} onClose={handleModalClose} />
+    </ListItem>
+  )
 };
 
 export default SettingsButton;

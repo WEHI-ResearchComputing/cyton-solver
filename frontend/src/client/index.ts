@@ -26,6 +26,7 @@ export type { ExperimentSettings_Output } from './models/ExperimentSettings_Outp
 export type { ExtrapolatedTimeResults } from './models/ExtrapolatedTimeResults';
 export type { ExtrapolationResults } from './models/ExtrapolationResults';
 export type { ExtrapolationTimes } from './models/ExtrapolationTimes';
+export type { FitResult } from './models/FitResult';
 export type { FittableParams } from './models/FittableParams';
 export type { HarvestTime } from './models/HarvestTime';
 export type { HarvestTimeResults } from './models/HarvestTimeResults';
@@ -72,4 +73,3 @@ export type { TaskId } from './models/TaskId';
 export type { ValidationError } from './models/ValidationError';
 
 export { DefaultService } from './services/DefaultService';
-export { RootService } from './services/RootService';

@@ -9,7 +9,7 @@ import pandas as pd
 from cyton.api.types import TaskId
 from cyton.core.types import Parameters
 
-def get_fitted_parameters(task_id: TaskId) -> Parameters:
+def get_fitted_parameters(task_id: TaskId) -> Parameters | None:
     """
     Retrieve fitted parameters from a CSV file associated with a given task ID.
 
@@ -26,7 +26,7 @@ def get_fitted_parameters(task_id: TaskId) -> Parameters:
 
     if os.path.exists(file_path):
         # Convert the fitted parameters to a dictionary
-        fitted_parameters = pd.read_csv(file_path).to_dict(orient='records')[0]
+        fitted_parameters = cast(Parameters, pd.read_csv(file_path).to_dict(orient='records')[0])
         # Deletes the file
         os.remove(file_path)
 
@@ -34,4 +34,4 @@ def get_fitted_parameters(task_id: TaskId) -> Parameters:
         # If the file does not exist, return None
         fitted_parameters = None
 
-    return cast(Parameters, fitted_parameters)
+    return fitted_parameters
