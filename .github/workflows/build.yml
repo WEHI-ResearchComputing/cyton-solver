@@ -45,7 +45,7 @@ jobs:
         run: pytest
 
       - name: Inspect 
-        uses: hynek/build-and-inspect-python-package@v2.0.2
+        uses: hynek/build-and-inspect-python-package@v2.1.0
         with:
           path: ./backend
           skip-wheel: 'true'
