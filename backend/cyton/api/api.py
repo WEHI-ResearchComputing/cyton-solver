@@ -1,4 +1,6 @@
-import os, tempfile, uuid
+import tempfile
+import uuid
+from pathlib import Path
 from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException, Request
 from cyton.core.types import Parameters
 from cyton.api.support.logger import initialize_logger
@@ -9,6 +11,7 @@ from cyton.api.support.check_status import get_fitted_parameters
 from cyton.api.types import TaskId
 from cyton.core.models import ExperimentSettings, ExperimentData, ExtrapolationResults
 from cyton.core.extrapolate import extrapolate_without_data
+from shutil import copyfileobj
 
 router = APIRouter()
 log = initialize_logger()
@@ -54,25 +57,22 @@ async def upload(request: Request, file: UploadFile = File(...)) -> ExperimentDa
     - dict: A dictionary containing the experiment data parsed from the uploaded file.
     """
     log.info(f"/upload was accessed from: {request.client}")
-    temp_file_path: str | None = None
+
+    if file.filename is None or Path(file.filename).suffix != ".xlsx":
+        raise HTTPException(status_code=400, detail="The uploaded file should have the file extension .xlsx")
 
     try:
-        contents = await file.read()
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
             # Write the contents to a temporary file
-            temp_file.write(contents)
-            temp_file_path = temp_file.name
+            copyfileobj(file.file, temp_file)
 
-        # Parse the file and extract the data
-        experiment_data = parse_file(temp_file_path)
+            # Parse the file and extract the data
+            experiment_data = parse_file(temp_file.name)
         
     except Exception:
         raise HTTPException(status_code=400, detail="Failed to upload file. Please try again.")
     
-    finally:
-        if temp_file_path is not None:
-            os.remove(temp_file_path)
-        log.info("Upload successful. Returning experiment data.")
+    log.info("Upload successful. Returning experiment data.")
 
     return experiment_data
 

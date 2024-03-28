@@ -16,13 +16,14 @@ import SettingsButton from '../Buttons/SettingsButton';
 import FitButton from '../Buttons/FitButton';
 import UploadButton from '../Buttons/UploadButton';
 import HelpButton from '../Buttons/HelpButton';
-import {EvolutionLive} from '../Plots/EvolutionLive';
-import {ProbabilityDist} from '../Plots/ProbabilityDist';
-import {CellsVsGens} from '../Plots/CellsVsGens';
-import {CytonClient, Parameters} from "../../client"
+import { EvolutionLive } from '../Plots/EvolutionLive';
+import { ProbabilityDist } from '../Plots/ProbabilityDist';
+import { CellsVsGens } from '../Plots/CellsVsGens';
+import { CytonClient, Parameters, ExperimentData_Output } from "../../client"
 import { useAsync } from 'react-async-hook';
 import ParameterForm from "../Form/Parameters"
 import { FormProvider, useForm } from 'react-hook-form';
+import { List, ListItem, MenuItem, TextField } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -32,19 +33,18 @@ function NavigationBar() {
   });
   const theme = useTheme();
   const methods = useForm<Parameters>({
-    defaultValues: null,
-    mode: "onChange",
+    mode: "onChange"
   })
   const defaults = useAsync(async () => {
     const ret = await client.root.defaultSettingsApiDefaultSettingsGet();
     // Update the form default values
-    methods.reset(ret.parameters);
+    methods.reset(ret.parameters, { keepDefaultValues: false });
     return ret;
   }, []);
   const formData = methods.watch();
-  const extrapolated = useAsync(async (parameters: string) =>{
+  const extrapolated = useAsync(async (parameters: string) => {
     // Don't extrapolate until we have parameters
-    if (!formData.b){
+    if (!formData.b) {
       return;
     }
     return client.root.extrapolateApiExtrapolatePost({
@@ -55,6 +55,8 @@ function NavigationBar() {
     // Stringify here prevents excessive re-renders due to a bad comparison
   }, [JSON.stringify(formData)]);
   const [open, setOpen] = useState(false);
+  const [experimentData, setExperimentData] = useState<ExperimentData_Output>();
+  const [condition, setCondition] = useState<string>();
   // const [parameters, setParameters] = useState<Parameters>(null);
 
   const handleDrawerOpen = () => {
@@ -67,78 +69,101 @@ function NavigationBar() {
 
   let plots: React.JSX.Element[];
   let cvgPlots: React.JSX.Element[];
-  if (typeof extrapolated.result != "undefined"){
+  if (typeof extrapolated.result != "undefined") {
     cvgPlots = extrapolated.result.hts.cells_gen[0].map((_, timepoint) =>
-      <CellsVsGens extrapolationData={extrapolated.result} timepoint={timepoint}/>
+      <CellsVsGens extrapolationData={extrapolated.result} timepoint={timepoint} />
     )
     plots = [
-      <EvolutionLive extrapolationData={extrapolated.result}/>,
-      <ProbabilityDist extrapolationData={extrapolated.result}/>
+      <EvolutionLive extrapolationData={extrapolated.result} />,
+      <ProbabilityDist extrapolationData={extrapolated.result} />
     ]
   }
   else {
-    cvgPlots =  [];
+    cvgPlots = [];
     plots = [];
   }
 
   return (
     <FormProvider {...methods}>
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h4" fontSize="16px">
-            Cyton Solver
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h4" fontSize="16px">
+              Cyton Solver
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          sx={{
             width: drawerWidth,
-            boxSizing: 'border-box'
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <ParameterForm/>
-        <Box sx={{ marginTop: 'auto' }}>
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box'
+            },
+          }}
+          variant="persistent"
+          anchor="left"
+          open={open}
+        >
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </DrawerHeader>
           <Divider />
-          <UploadButton />
-          <FitButton />
-          <SettingsButton />
-          <HelpButton />
-        </Box>
-      </Drawer>
-      <Main open={open}>
-        <DrawerHeader />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%'}}>
-          {cvgPlots}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%'}}>
-          {plots}
-        </div>
-      </Main>
-    </Box>
+          <ParameterForm />
+          <Box sx={{ marginTop: 'auto' }}>
+            <Divider />
+            <List>
+              <UploadButton client={client} onUpload={result => {
+                setExperimentData(result)
+                // methods.reset(result, {
+                //   keepDefaultValues: true,
+                //   keepDirty: true
+                // })
+              }} />
+              <FitButton />
+              <ListItem>
+                <TextField
+                  select
+                  label="Select"
+                  fullWidth={true}
+                  defaultValue={experimentData?.conditions[0]}
+                  onChange={condition => setCondition(condition)}
+                >
+                  {experimentData?.conditions.map((condition) => (
+                    <MenuItem key={condition} value={condition}>
+                      {condition}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </ListItem>
+              <SettingsButton />
+              <HelpButton />
+            </List>
+          </Box>
+        </Drawer>
+        <Main open={open}>
+          <DrawerHeader />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', width: '100%' }}>
+            {cvgPlots}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', paddingTop: '20px', width: '100%' }}>
+            {plots}
+          </div>
+        </Main>
+      </Box>
     </FormProvider>
   );
 }
