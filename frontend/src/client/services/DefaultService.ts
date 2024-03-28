@@ -162,14 +162,14 @@ export class DefaultService {
      *
      * Returns:
      * - dict: A dictionary containing the fitted parameters.
-     * @returns Parameters Successful Response
+     * @returns any Successful Response
      * @throws ApiError
      */
     public checkStatusApiCheckStatusPost({
         taskId,
     }: {
         taskId: TaskId,
-    }): CancelablePromise<Parameters> {
+    }): CancelablePromise<(Parameters | null)> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/api/check_status',

@@ -25,6 +25,7 @@ import ParameterForm from "../Form/Parameters"
 import { FormProvider, useForm } from 'react-hook-form';
 import { List, ListItem, MenuItem, TextField, Select } from "@mui/material";
 import { useSnackbar } from 'notistack';
+import {makeErrorMsg} from "../../utils";
 
 const drawerWidth = 240;
 // Wait 5 seconds between each request
@@ -37,19 +38,29 @@ function NavigationBar() {
       const result = await client.default.checkStatusApiCheckStatusPost({
         taskId
       });
-      closeSnackbar();
-      enqueueSnackbar({
-        variant: "success",
-        message: "Fit successfully completed. Parameters have been updated.",
-        preventDuplicate: true
-      })
-      methods.reset(result, {
-        keepDefaultValues: true,
-        keepDirty: true
-      })
+      if (result) {
+        // If we received a valid object, then we can stop waiting
+        closeSnackbar();
+        enqueueSnackbar({
+          variant: "success",
+          message: "Fit successfully completed. Parameters have been updated.",
+          preventDuplicate: true
+        })
+        methods.reset(result, {
+          keepDefaultValues: true,
+          keepDirty: true
+        })
+      }
+      else {
+        // If we received "undefined", then retry in another 5 seconds
+        setTimeout(checkFitStatus, fitCheckInterval, taskId);
+      }
     }
-    catch {
-      setTimeout(checkFitStatus, fitCheckInterval, taskId);
+    catch(e){
+      enqueueSnackbar({
+        variant: "error",
+        message: makeErrorMsg(e)
+      })
     }
   };
 

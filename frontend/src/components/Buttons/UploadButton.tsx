@@ -4,6 +4,7 @@ import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { CytonClient, Parameters, ExperimentData_Output, ApiError } from "../../client"
 import { VariantType, useSnackbar } from 'notistack';
+import { makeErrorMsg } from "../../utils";
 
 const UploadButton = ({ client, onUpload }: { client: CytonClient, onUpload: (data: ExperimentData_Output) => void }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -30,16 +31,10 @@ const UploadButton = ({ client, onUpload }: { client: CytonClient, onUpload: (da
         });
         onUpload(response);
       } catch (error) {
-        if (error instanceof ApiError) {
-          enqueueSnackbar(`Error processing file: ${error.statusText}. ${error.body.detail}`, {
-            variant: "error"
-          });
-        }
-        else {
-          enqueueSnackbar(`Error processing file: ${error}`, {
-            variant: "error"
-          });
-        }
+        enqueueSnackbar({
+          variant: "error",
+          message: makeErrorMsg(error)
+        });
       }
     } else {
       enqueueSnackbar('No file was selected', {
@@ -49,21 +44,21 @@ const UploadButton = ({ client, onUpload }: { client: CytonClient, onUpload: (da
   };
 
   return (
-      <ListItem disablePadding>
-        <ListItemButton onClick={handleButtonClick}>
-          <ListItemIcon style={{ minWidth: '40px' }}>
-            <UploadFileIcon />
-          </ListItemIcon>
-          <ListItemText primary="Upload" />
-        </ListItemButton>
+    <ListItem disablePadding>
+      <ListItemButton onClick={handleButtonClick}>
+        <ListItemIcon style={{ minWidth: '40px' }}>
+          <UploadFileIcon />
+        </ListItemIcon>
+        <ListItemText primary="Upload" />
+      </ListItemButton>
       {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-      </ListItem>
+      <input
+        ref={fileInputRef}
+        type="file"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+    </ListItem>
   );
 };
 
